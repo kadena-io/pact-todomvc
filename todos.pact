@@ -1,11 +1,11 @@
-;; accounts module, admin keyset, and table
+;; todos module, admin keyset, and table
 
 (use 'keysets)
 
 (define-keyset 'todo-admin-keyset
   (read-keyset "todo-admin-keyset"))
 
-(module accounts 'todo-admin-keyset
+(module todos 'todo-admin-keyset
   (defconst ACTIVE "active")
   (defconst COMPLETED "completed")
   (defschema todo
@@ -16,7 +16,7 @@
      data
      )
   (deftable todos:{todo}
-     "Main table for accounts module.")
+     "Main table for todos module.")
 
   (defconst LAST-UUID "last-uuid")
   (defschema uuid
@@ -39,8 +39,27 @@
     )
   )
 
+  (defun toggle-todo-status (id)
+    (with-read todos id {"state":=state}
+      (update todos id {"state":=(if (= state ACTIVE) COMPLETED ACTIVE)})
+    )
+  )
+
+  (defun edit-todo (id entry)
+    (update todos id {"entry":=entry})
+  )
+
+  (defun delete-todo (id)
+    (delete todos id)
+  )
+
+  (defun read-todo (id)
+    (read todos id)
+  )
+
   (defun read-all ()
-    (map (read-account-admin) (keys accounts)))
+    (map (read-todo) (keys todos))
+  )
 
 )
 

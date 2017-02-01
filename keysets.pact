@@ -1,6 +1,6 @@
-(define-keyset 'pact-admin (read-keyset "pact-admin-keyset"))
-
-(module keysets 'pact-admin
+(define-keyset 'todo-admin (read-keyset "todo-admin-keyset"))
+ 
+(module keysets 'todo-admin
 
  (defun keys-some (count matched)
    "Match at least one key in keyset"
