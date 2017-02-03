@@ -8,3 +8,7 @@
 (load "todos.pact")
 (commit-tx)
 (typecheck "todos")
+
+(new-todo "foo")
+(read-todo 0)
+(toggle-todo-status 0)

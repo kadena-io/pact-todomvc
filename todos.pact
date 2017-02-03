@@ -8,13 +8,15 @@
 (module todos 'todo-admin-keyset
   (defconst ACTIVE "active")
   (defconst COMPLETED "completed")
+  (defconst DELETED "deleted")
   (defschema todo
     "Row type for todos."
      id:integer
+     deleted:bool
      state:string
      entry:string
-     data
      )
+
   (deftable todo-table:{todo})
 
   (defconst NEXT-UUID "next-uuid")
@@ -24,48 +26,57 @@
     )
   (deftable uuid-tracker:{uuid})
 
-  (defun new-uuid ()
-    (with-default-read uuid-tracker NEXT-UUID
-      {"uuid": 0}
-      {"uuid":= next-uuid}
-      (update uuid-tracker NEXT-UUID {"uuid": (+ next-uuid 1)})
-      next-uuid
-    )
-  )
-
   (defun new-todo (entry)
-    (let ((id (new-uuid)))
-      (insert todo-table (format "{}" id) {"id":id, "state": ACTIVE, "entry": entry})
+    (with-read uuid-tracker NEXT-UUID {"uuid":= id}
+      (update uuid-tracker NEXT-UUID {"uuid": (+ id 1)})
+      (insert todo-table (format "{}" id) {"id":id, "deleted":false, "state": ACTIVE, "entry": entry})
       {"id": id, "status":ACTIVE, "entry":entry}
     )
   )
 
-  (defun toggle-todo-status (id)
-    (with-read todo-table id {"state":= state}
-      (update todo-table id {"state": (if (= state ACTIVE) COMPLETED ACTIVE)})
+  (defun toggle-todo-status (id:integer)
+    (let ((idStr (format "{}" id)))
+      (check-deleted idStr)
+      (with-read todo-table idStr {"state":= state}
+        (update todo-table idStr {"state": (if (= state ACTIVE) COMPLETED ACTIVE)})
+      )
     )
   )
 
-  (defun edit-todo (id entry)
-    (update todo-table id {"entry": entry})
+  (defun not-deleted (obj:object{todo})
+    (bind obj {"deleted":=deleted}
+      (not deleted)
+    )
+  )
+
+  (defun check-deleted (id:string)
+    (enforce (not-deleted (read todo-table id)) "todo has been deleted")
+  )
+
+  (defun edit-todo (id:integer entry)
+    (let ((idStr (format "{}" id)))
+      (check-deleted idStr)
+      (update todo-table idStr {"entry": entry})
+    )
   )
 
   (defun delete-todo (id:integer)
     (let ((id-key (format "{}" id)))
-      (remove todo-table id-key)
+      (update todo-table id-key {"deleted": true})
     )
   )
 
-  (defun read-todo (id)
-    (read todo-table id)
+  (defun read-todo (id:integer)
+    (read todo-table (format "{}" id))
   )
 
-  (defun read-all ()
-    (map (read-todo) (keys todo-table))
+  (defun read-all:[object{todo}] ()
+    (filter (not-deleted) (map (read todo-table) (keys todo-table)))
   )
 
 )
 
 (create-table todo-table)
 (create-table uuid-tracker)
+(insert uuid-tracker NEXT-UUID {"uuid": 0})
 ;done
