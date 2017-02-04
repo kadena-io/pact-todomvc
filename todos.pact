@@ -70,7 +70,7 @@
     (read todo-table (format "{}" id))
   )
 
-  (defun read-all:[object{todo}] ()
+  (defun read-todos:[object{todo}] ()
     (filter (not-deleted) (map (read todo-table) (keys todo-table)))
   )
 
