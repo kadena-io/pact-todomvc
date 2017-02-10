@@ -1,0 +1,24 @@
+{
+  "name": "pact-todomvc",
+  "version": "1.0.0",
+  "description": "a demo of what a todomvc looks like in a smart contract langauge",
+  "repository": {
+    "type": "git",
+    "url": "github.com/kadena-io/pact-todomvc"
+  },
+  "scripts": {
+    "serve": "http-server -o -s -c 1 -a localhost"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "director": "^1.2.0",
+    "pact-lang-api": "^1.0.1",
+    "todomvc-app-css": "^2.0.0",
+    "todomvc-common": "^1.0.1",
+    "vue": "^2.1.8",
+    "vue-resource": "^1.2.0"
+  },
+  "devDependencies": {
+    "http-server": "^0.9.0"
+  }
+}
