@@ -1,9 +1,5 @@
 ;; todos module, admin keyset, and table
-
-(use 'keysets)
-
-(define-keyset 'todo-admin-keyset
-  (read-keyset "todo-admin-keyset"))
+(define-keyset 'todo-admin-keyset (read-keyset "todo-admin-keyset"))
 
 (module todos 'todo-admin-keyset
   (defconst ACTIVE "active")
