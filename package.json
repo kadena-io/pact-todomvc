@@ -7,7 +7,7 @@
     "url": "github.com/kadena-io/pact-todomvc"
   },
   "scripts": {
-    "serve": "http-server -o -s -c 1 -a localhost"
+    "serve": "http-server -o -s -c -1 -a localhost --cors"
   },
   "license": "MIT",
   "dependencies": {
