@@ -1,29 +1,29 @@
-# Vue.js TodoMVC Example
+# Pact Smart Contract Language TodoMVC demo
+### (using Vue.js for the front end)
 
-> Vue.js is a library for building interactive web interfaces.
-It provides data-driven, nestable view components with a simple and flexible API.
+## Running the demo
 
-> _[Vue.js - vuejs.org](http://vuejs.org)_
+```
+# Install pact (see github.com/kadena-io/pact for help)
+brew install pact
 
-## Learning Vue.js
+# Install npm's deps
+npm install
 
-The [Vue.js website](http://vuejs.org/) is a great resource to get started.
+# Launch pact's server
+pact --serve 8080
 
-Here are some links you may find helpful:
+# (in another terminal) load the pact/todos.pact smart contract
+./initialize-todos.sh 8080
 
-* [Official Guide](http://vuejs.org/guide/)
-* [API Reference](http://vuejs.org/api/)
-* [Examples](http://vuejs.org/examples/)
-* [Building Larger Apps with Vue.js](http://v1.vuejs.org/guide/application.html)
+# open localhost:8080 in your browser
+```
 
-Get help from other Vue.js users:
+## Details
 
-* [Vue.js on Twitter](https://twitter.com/vuejs)
-* [Vue.js on Gitter](https://gitter.im/vuejs/vue)
-* [Vue.js Forum](http://forum.vuejs.org)
-
-_If you have other helpful links to share, or find any of the links above no longer work, please [let us know](https://github.com/tastejs/todomvc/issues)._
+To keep the pact<->vue interactions clear, we made them fully synchronous instead of using vue to hold the main application's state.
+Simply, for every change one makes to the todo list (besides filtering) that change is propagated back to pact and the application's full state is then reread via the `(todos.read-all)` command.
 
 ## Credit
 
-This TodoMVC application was created by [Evan You](http://evanyou.me).
+This original Vue.js TodoMVC application was created by [Evan You](http://evanyou.me).
