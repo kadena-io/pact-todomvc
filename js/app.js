@@ -123,7 +123,6 @@
             var id = todo.id;
             //ex: (todos.delete-todo 1)
             var pactCmd = '(todos.delete-todo ' + JSON.stringify(id) + ')';
-            var msg = Pact.simple.exec.createCommand(this.keyPair, Date.now().toString(), pactCmd);
             this.sendPactCmdSync(pactCmd);
             this.getAllTodos();
         },
