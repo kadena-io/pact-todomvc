@@ -102,7 +102,7 @@
 
       // we're keeping this todomvc simple and having the app update its todos fully every time
       updateTodos: function(resp) {
-        var allTodos = resp.response.data.map(this.convertEntry).sort(function(a,b){
+        var allTodos = resp.response.result.data.map(this.convertEntry).sort(function(a,b){
           if (a.id < b.id) {
             return -1;
           } else if (a.id > b.id) {
