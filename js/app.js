@@ -82,11 +82,11 @@
       sendPactCmdSync: function(cmd, f) {
         var msg = Pact.simple.exec.createCommand(this.keyPair, Date.now().toString(), cmd);
         this.debug(msg);
-        this.$http.post('/api/send', msg).then(function(resp) {
+        this.$http.post('/api/v1/send', msg).then(function(resp) {
           if (resp.body.status === "success") {
             var getResMsg = {"listen": resp.body.response.requestKeys[0]};
             this.debug(getResMsg);
-            this.$http.post('/api/listen', getResMsg).then(function(rkResp) {
+            this.$http.post('/api/v1/listen', getResMsg).then(function(rkResp) {
               if (rkResp.body.status === "success") {
                 this.debug(rkResp.body);
                 if (f) {f(rkResp.body);}
