@@ -3,7 +3,8 @@
 ## Running the demo
 
 ```
-# Install pact (see github.com/kadena-io/pact for help)
+# Install Pact (see github.com/kadena-io/pact for help)
+brew install kadena-io/pact/pact
 
 # Install npm's deps
 npm install
