@@ -1,5 +1,7 @@
 # Pact Smart Contract Language TodoMVC demo
 
+![](todos-pact.png)
+
 ## Running the demo
 
 ```
