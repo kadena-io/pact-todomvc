@@ -1,10 +1,12 @@
-(env-keys ["todoadmin" "accountadmin" "user123" "user456"])
-(env-data { "todo-admin-keyset": { "keys": ["todoadmin"], "pred": "=" } })
+(env-keys ["todoadmin"])
+(env-data { "todo-admin-keyset":
+  { "keys": ["todoadmin"], "pred": "keys-all" } })
+
 (begin-tx)
 (load "todos.pact")
 (commit-tx)
-(typecheck "todos")
 
+(typecheck "todos")
 
 (new-todo "get bread")
 (read-todo 0)
