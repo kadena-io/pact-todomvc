@@ -119,7 +119,7 @@
 
   (defun id-key (id:integer)
     "Format ID integer value as todo row key."
-    (format "{}" id)
+    (format "{}" [id])
   )
 
 
