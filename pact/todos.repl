@@ -11,4 +11,3 @@
 (new-todo "get bread")
 (read-todo 0)
 (toggle-todo-status 0)
-(read-todo 0)

@@ -112,10 +112,11 @@
   (defun enforce-not-deleted (id:integer)
     "Enforce row exists at ID and deleted flag is not set. \
     \ Also returns formatted row key."
-    (let ((row (read todo-table (id-key id))))
-      (enforce (not-deleted row)
+    (let ((key (id-key id)))
+      (enforce (not-deleted (read todo-table key))
         "todo must not be deleted")
-      (id-key id)))
+      key))
+
 
   (defun id-key (id:integer)
     "Format ID integer value as todo row key."
