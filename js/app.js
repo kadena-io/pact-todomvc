@@ -144,6 +144,14 @@
         this.editedTodo = todo;
       },
 
+      toggleStatus: function (todo) {
+        var id = todo.id;
+        //ex: (todos.toggle-todo-status 1)
+        var pactCmd = '(todos.toggle-todo-status ' + JSON.stringify(id) + ')';
+        this.sendPactCmdSync(pactCmd);
+        this.getAllTodos();
+      },
+
       doneEdit: function (todo) {
         if (!this.editedTodo) {
           return;
