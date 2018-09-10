@@ -2,26 +2,25 @@
 
 ![](todos-pact.png)
 
-## Running the demo
+## Setup
 
-```
-# Install Pact (see github.com/kadena-io/pact for help)
-brew install kadena-io/pact/pact
+- Install Pact
+- Install Node >= 8.11.4
+- `mkdir log`
 
-# Install npm's deps
-npm install
+## Scripts
 
-# Launch pact's server
-pact --serve server.conf
+`npm start:pact`: Start the Pact Server
 
-# (in another terminal) load the pact/todos.pact smart contract
-# NB: you only have to do this once, see Using the Pact Dev Server for details
-./initialize-todos.sh 9001
+`npm start:dev`: Start the Webpack Dev Server
 
-# open localhost:9001 in your browser
-```
+`npm test`: Run Jest
 
-## Details
+`npm run lint`: Run ESLint
+
+`npm run prettier`: Run Prettier
+
+# Details
 
 To keep the pact<->vue interactions clear, we made them fully synchronous instead of using vue to hold the main application's state.
 Simply, for every change one makes to the todo list (besides filtering) that change is propagated back to pact and the application's full state is then reread via the `(todos.read-all)` command.

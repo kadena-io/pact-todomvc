@@ -1,0 +1,14 @@
+{
+  plugins: ['regenerator-transform', 'transform-object-rest-spread'],
+  presets: [
+    [
+      'env',
+      {
+        targets: {
+          node: 'current',
+        },
+      },
+    ],
+    'react',
+  ],
+}

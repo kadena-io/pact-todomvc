@@ -1,0 +1,10 @@
+node_modules
+.*
+*.html
+*.conf
+*.sh
+*.png
+pact
+log
+coverage
+dist

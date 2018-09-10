@@ -1,0 +1,17 @@
+{
+  "extends": "airbnb",
+  "globals": {
+    "PACT_API_CONFIG": true,
+    "API_HOST": true
+  },
+  "rules": {
+    "operator-linebreak": ["error", "after"],
+    "comma-dangle": ["error", {
+      "arrays": "only-multiline",
+      "objects": "only-multiline",
+      "imports": "only-multiline",
+      "exports": "only-multiline",
+      "functions": "ignore"
+    }]
+  }
+}

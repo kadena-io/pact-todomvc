@@ -1,0 +1,67 @@
+$cyan: #09c;
+
+html {
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 100;
+  text-align: center;
+  padding: 2em;
+  background: #eaeaea;
+  * {
+    box-sizing: border-box;
+  }
+}
+
+body {
+  margin: 0;
+}
+
+h1 {
+  font-weight: 300;
+  margin: 0 0 1em;
+}
+
+h2 {
+  font-weight: 100;
+}
+
+h2,
+p {
+  margin: 2em 0;
+}
+
+.btn {
+  display: inline-block;
+  border: none;
+  background: $cyan;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 100;
+  padding: 0.5em 1em;
+  border-radius: 0.3em;
+  cursor: pointer;
+  font-size: 1em;
+  outline: none;
+
+  &:hover {
+    background: darken($cyan, 5%);
+  }
+}
+
+.index {
+  background: #fff;
+  padding: 2em;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+@media (min-width: 25em) {
+  .index {
+    width: 100%;
+  }
+}
+
+@media (min-width: 40em) {
+  .index {
+    width: 40em;
+    margin: 0 auto;
+  }
+}
