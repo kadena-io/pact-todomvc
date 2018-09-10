@@ -46,7 +46,6 @@ const initialState = {
 
 const mockTodos = [{ id: 2, entry: 'Alpha' }, { id: 1, entry: 'Zoo' }];
 
-
 describe('Todos Saga', () => {
   describe('Action Creators', () => {
     test('updateNewTodoField() should return an action with a newTodo', () => {
