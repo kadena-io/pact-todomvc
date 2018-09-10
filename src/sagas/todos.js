@@ -187,10 +187,10 @@ export function* removeTodoSaga(id) {
   }
 }
 
-export function* updateTodoSaga(id, title) {
-  yield put({ type: UPDATE_TODO_REQUEST, id, title });
+export function* updateTodoSaga(id, entry) {
+  yield put({ type: UPDATE_TODO_REQUEST, id, entry });
   try {
-    const todo = yield call(sendPactCommand, `(todos.edit-todo ${id} ${title})`);
+    const todo = yield call(sendPactCommand, `(todos.edit-todo ${id} ${entry})`);
     yield put({ type: UPDATE_TODO_SUCCEEDED, todo });
   } catch (error) {
     yield put({ type: UPDATE_TODO_FAILED, error });

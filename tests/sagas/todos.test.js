@@ -1,4 +1,5 @@
 import { call, put } from 'redux-saga/effects';
+import { testSaga } from 'redux-saga-test-plan';
 
 import {
   FETCH_TODOS,
@@ -33,6 +34,8 @@ import {
 
 import reducer from '../../src/sagas/todos';
 
+import * as sendPactCommand from '../../src/utils/send-pact-command';
+
 const initialState = {
   todosIsLoading: false,
   todosError: null,
@@ -41,7 +44,8 @@ const initialState = {
   editedTodo: null,
 };
 
-jest.mock('../../src/utils/send-pact-command');
+const mockTodos = [{ id: 2, entry: 'Alpha' }, { id: 1, entry: 'Zoo' }];
+
 
 describe('Todos Saga', () => {
   describe('Action Creators', () => {
@@ -73,7 +77,89 @@ describe('Todos Saga', () => {
     });
   });
 
-  describe('Sagas', () => {});
+  describe('Sagas', () => {
+    afterEach(() => {
+      sendPactCommand.default.mockRestore();
+    });
+
+    test.skip('fetchTodosSaga() should return an action with an id', () => {
+      sendPactCommand.default = jest.fn().mockReturnValue(mockTodos);
+
+      testSaga(fetchTodosSaga)
+        .next()
+        .put({ type: FETCH_TODOS_REQUEST })
+        .next()
+        .call(sendPactCommand.default, 'todos.read-todos')
+        .next()
+        .put({ type: FETCH_TODOS_SUCCEEDED, todos: mockTodos })
+        .next()
+        .isDone();
+    });
+
+    test('fetchTodosSaga() should throw a failure on error', () => {
+      sendPactCommand.default = jest.fn();
+
+      const error = new Error('error');
+
+      testSaga(fetchTodosSaga)
+        .next()
+        .put({ type: FETCH_TODOS_REQUEST })
+        .next()
+        .throw(error)
+        .put({ type: FETCH_TODOS_FAILED, error })
+        .next()
+        .isDone();
+    });
+
+    test('saveNewTodoSaga() should throw a failure on error', () => {
+      sendPactCommand.default = jest.fn();
+
+      const error = new Error('error');
+      const entry = 'a todo';
+
+      testSaga(saveNewTodoSaga, entry)
+        .next()
+        .put({ type: SAVE_NEW_TODO_REQUEST })
+        .next()
+        .throw(error)
+        .put({ type: SAVE_NEW_TODO_FAILED, error })
+        .next()
+        .isDone();
+    });
+
+    test('removeTodoSaga() should throw a failure on error', () => {
+      sendPactCommand.default = jest.fn();
+
+      const error = new Error('error');
+      const id = 1;
+
+      testSaga(removeTodoSaga, id)
+        .next()
+        .put({ type: REMOVE_TODO_REQUEST, id })
+        .next()
+        .throw(error)
+        .put({ type: REMOVE_TODO_FAILED, error })
+        .next()
+        .isDone();
+    });
+
+    test('updateTodoSaga() should throw a failure on error', () => {
+      sendPactCommand.default = jest.fn();
+
+      const error = new Error('error');
+      const id = 1;
+      const entry = 'a todo';
+
+      testSaga(updateTodoSaga, id, entry)
+        .next()
+        .put({ type: UPDATE_TODO_REQUEST, id, entry })
+        .next()
+        .throw(error)
+        .put({ type: UPDATE_TODO_FAILED, error })
+        .next()
+        .isDone();
+    });
+  });
 
   describe('Reducer', () => {
     test('FETCH_TODOS_REQUEST should set todosIsLoading to true', () => {
@@ -84,15 +170,14 @@ describe('Todos Saga', () => {
     });
 
     test('FETCH_TODOS_SUCCEEDED should set todosIsLoading to false and sort todos by ID', () => {
-      const todos = [{ id: 2, entry: 'Alpha' }, { id: 1, entry: 'Zoo' }];
       const state = { ...initialState, todosIsLoading: true };
       const expected = {
         ...state,
         todosError: null,
-        todos: todos.sort((a, b) => a.id - b.id),
+        todos: mockTodos.sort((a, b) => a.id - b.id),
         todosIsLoading: false,
       };
-      const actual = reducer(state, { type: FETCH_TODOS_SUCCEEDED, todos });
+      const actual = reducer(state, { type: FETCH_TODOS_SUCCEEDED, todos: mockTodos });
       expect(actual).toEqual(expected);
     });
 
@@ -112,13 +197,12 @@ describe('Todos Saga', () => {
     });
 
     test('SAVE_NEW_TODO_SUCCEEDED should set todosIsLoading to false and add new todo sort todos by ID', () => {
-      const todos = [{ id: 2, entry: 'Alpha' }, { id: 1, entry: 'Zoo' }];
       const todo = { id: 3, entry: 'Bravo' };
-      const state = { ...initialState, todos, todosIsLoading: true };
+      const state = { ...initialState, todos: mockTodos, todosIsLoading: true };
       const expected = {
         ...state,
         todosError: null,
-        todos: [...todos, todo].sort((a, b) => a.id - b.id),
+        todos: [...state.todos, todo].sort((a, b) => a.id - b.id),
         todosIsLoading: false,
       };
       const actual = reducer(state, { type: SAVE_NEW_TODO_SUCCEEDED, todo });
@@ -126,9 +210,8 @@ describe('Todos Saga', () => {
     });
 
     test('SAVE_NEW_TODO_FAILED should set todosError', () => {
-      const todos = [{ id: 2, entry: 'Alpha' }, { id: 1, entry: 'Zoo' }];
       const error = 'Some error message';
-      const state = { ...initialState, todosIsLoading: true, todos };
+      const state = { ...initialState, todosIsLoading: true, todos: mockTodos };
       const expected = { ...initialState, todosError: error, todosIsLoading: false };
       const actual = reducer(initialState, { type: SAVE_NEW_TODO_FAILED, error });
       expect(actual).toEqual(expected);
@@ -142,13 +225,12 @@ describe('Todos Saga', () => {
     });
 
     test('REMOVE_TODO_SUCCEEDED should set todosIsLoading to false and remove the todo', () => {
-      const todos = [{ id: 2, entry: 'Alpha' }, { id: 1, entry: 'Zoo' }];
       const id = 1;
-      const state = { ...initialState, todos, todosIsLoading: true };
+      const state = { ...initialState, todos: mockTodos, todosIsLoading: true };
       const expected = {
         ...state,
         todosError: null,
-        todos: todos.filter(todo => todo.id !== id),
+        todos: state.todos.filter(todo => todo.id !== id),
         todosIsLoading: false,
       };
       const actual = reducer(state, { type: REMOVE_TODO_SUCCEEDED, id });
@@ -156,9 +238,8 @@ describe('Todos Saga', () => {
     });
 
     test('REMOVE_TODO_FAILED should set todosError', () => {
-      const todos = [{ id: 2, entry: 'Alpha' }, { id: 1, entry: 'Zoo' }];
       const error = 'Some error message';
-      const state = { ...initialState, todosIsLoading: true, todos };
+      const state = { ...initialState, todosIsLoading: true, todos: mockTodos };
       const expected = { ...initialState, todosError: error, todosIsLoading: false };
       const actual = reducer(initialState, { type: REMOVE_TODO_FAILED, error });
       expect(actual).toEqual(expected);
