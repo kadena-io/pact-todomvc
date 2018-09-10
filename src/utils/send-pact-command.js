@@ -3,11 +3,11 @@ import Pact from 'pact-lang-api';
 
 const KEY_PAIR = Pact.crypto.genKeyPair();
 
-export async function sendPactCommand(cmd) {
+export default async function sendPactCommand(cmd) {
   // Build the command JSON object
   const commandJSON = Pact.simple.exec.createCommand(KEY_PAIR, Date.now().toString(), cmd);
 
-  console.log(`Executing Pact command: ${cmd} with JSON:`, commandJSON);
+  // console.log(`Executing Pact command: ${cmd} with JSON:`, commandJSON);
 
   // Fire a POST to /api/v1/send and parse the response for Command hashes
   const commandResponse = await fetch(`${API_HOST}/api/v1/send`, {
@@ -20,7 +20,7 @@ export async function sendPactCommand(cmd) {
     throw new Error(`PACT Failure in ${cmd}: ${commandResponseJSON.error}`);
   }
 
-  console.log('Listen for hash: ', commandJSON.cmds[0].hash);
+  // console.log('Listen for hash: ', commandJSON.cmds[0].hash);
 
   // Fire a POST to /api/v1/listen to listen for the result of a single command
   const listenResponse = await fetch(`${API_HOST}/api/v1/listen`, {

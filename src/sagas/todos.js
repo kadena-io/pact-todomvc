@@ -1,6 +1,6 @@
 import { call, put } from 'redux-saga/effects';
 
-import { sendPactCommand } from '../utils/send-pact-command';
+import sendPactCommand from '../utils/send-pact-command';
 
 export const FETCH_TODOS = 'pact-todomvc/todos/FETCH_TODOS';
 export const FETCH_TODOS_REQUEST = 'pact-todomvc/todos/FETCH_TODOS_REQUEST';
@@ -64,7 +64,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         todosError: null,
-        todos: [...state.todos, action.todo],
+        todos: [...state.todos, action.todo].sort((a, b) => a.id - b.id),
         todosIsLoading: false,
         newTodo: '',
       };
@@ -103,7 +103,7 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         todosError: null,
         todos: state.todos
-          .filter(todo => todo.id !== action.id)
+          .filter(todo => todo.id !== action.todo.id)
           .push(action.todo)
           .sort((a, b) => a.id - b.id),
         todosIsLoading: false,
@@ -119,11 +119,11 @@ export default function reducer(state = initialState, action = {}) {
     case EDIT_TODO:
       return {
         ...state,
-        editedTodo: state.todos.filter(todo => todo.id === action.id)[0],
+        editedTodo: state.todos.find(todo => todo.id === action.id),
       };
 
     case UPDATE_TODO_TITLE:
-      workingTodo = state.todos.filter(todo => todo.id === action.id)[0];
+      workingTodo = state.todos.find(todo => todo.id === action.id);
       workingTodo.title = action.title;
       return {
         ...state,
@@ -131,7 +131,7 @@ export default function reducer(state = initialState, action = {}) {
       };
 
     case UPDATE_NEW_TODO_FIELD:
-      return { ...state, newTodo };
+      return { ...state, newTodo: action.newTodo };
 
     case RESET_NEW_TODO_FIELD:
       return { ...state, newTodo: '' };
@@ -149,8 +149,8 @@ export function fetchTodos() {
   return { type: FETCH_TODOS };
 }
 
-export function saveNewTodo(title) {
-  return { type: SAVE_NEW_TOD, title };
+export function saveNewTodo(entry) {
+  return { type: SAVE_NEW_TODO, entry };
 }
 
 export function removeTodo(id) {
@@ -167,10 +167,10 @@ export function* fetchTodosSaga() {
   }
 }
 
-export function* saveNewTodoSaga(title) {
+export function* saveNewTodoSaga(entry) {
   yield put({ type: SAVE_NEW_TODO_REQUEST });
   try {
-    const newTodo = yield call(sendPactCommand, `(todos.new-todo ${title})`);
+    const newTodo = yield call(sendPactCommand, `(todos.new-todo ${entry})`);
     yield put({ type: SAVE_NEW_TODO_SUCCEEDED, newTodo });
   } catch (error) {
     yield put({ type: SAVE_NEW_TODO_FAILED, error });
