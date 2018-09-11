@@ -77,11 +77,7 @@ describe('Todos Saga', () => {
   });
 
   describe('Sagas', () => {
-    afterEach(() => {
-      sendPactCommand.default.mockRestore();
-    });
-
-    test.skip('fetchTodosSaga() should return an array of todos', () => {
+    test('fetchTodosSaga() should return an array of todos', () => {
       sendPactCommand.default = jest.fn().mockReturnValue(mockTodos);
 
       testSaga(fetchTodosSaga)
@@ -182,7 +178,7 @@ describe('Todos Saga', () => {
 
       testSaga(updateTodoSaga, id, entry)
         .next()
-        .put({ type: UPDATE_TODO_REQUEST, id, entry})
+        .put({ type: UPDATE_TODO_REQUEST, id, entry })
         .next()
         .call(sendPactCommand.default, `(todos.edit-todo ${id} ${entry})`)
         .next()
@@ -200,14 +196,13 @@ describe('Todos Saga', () => {
 
       testSaga(updateTodoSaga, id, entry)
         .next()
-        .put({ type: UPDATE_TODO_REQUEST, id, entry})
+        .put({ type: UPDATE_TODO_REQUEST, id, entry })
         .next()
         .throw(error)
         .put({ type: UPDATE_TODO_FAILED, error })
         .next()
         .isDone();
     });
-
   });
 
   describe('Reducer', () => {

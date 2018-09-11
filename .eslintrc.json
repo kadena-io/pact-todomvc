@@ -2,7 +2,8 @@
   "extends": "airbnb",
   "globals": {
     "PACT_API_CONFIG": true,
-    "API_HOST": true
+    "API_HOST": true,
+    "fetch": true
   },
   "rules": {
     "operator-linebreak": ["error", "after"],
