@@ -81,7 +81,7 @@ describe('Todos Saga', () => {
       sendPactCommand.default.mockRestore();
     });
 
-    test.skip('fetchTodosSaga() should return an action with an id', () => {
+    test.skip('fetchTodosSaga() should return an array of todos', () => {
       sendPactCommand.default = jest.fn().mockReturnValue(mockTodos);
 
       testSaga(fetchTodosSaga)
@@ -110,6 +110,22 @@ describe('Todos Saga', () => {
         .isDone();
     });
 
+    test.skip('saveNewTodoSaga() should return a newly-created todo', () => {
+      sendPactCommand.default = jest.fn().mockReturnValue(mockTodos[0]);
+
+      const entry = 'A new todo';
+
+      testSaga(saveNewTodoSaga)
+        .next()
+        .put({ type: SAVE_NEW_TODO_REQUEST })
+        .next()
+        .call(sendPactCommand.default, `(todos.new-todo ${entry})`)
+        .next()
+        .put({ type: SAVE_NEW_TODO_SUCCEEDED, todo: mockTodos[0] })
+        .next()
+        .isDone();
+    });
+
     test('saveNewTodoSaga() should throw a failure on error', () => {
       sendPactCommand.default = jest.fn();
 
@@ -122,6 +138,22 @@ describe('Todos Saga', () => {
         .next()
         .throw(error)
         .put({ type: SAVE_NEW_TODO_FAILED, error })
+        .next()
+        .isDone();
+    });
+
+    test.skip('removeTodoSaga() should return the id of the removed todo', () => {
+      const id = 1;
+
+      sendPactCommand.default = jest.fn().mockReturnValue(id);
+
+      testSaga(removeTodoSaga)
+        .next()
+        .put({ type: REMOVE_TODO_REQUEST })
+        .next()
+        .call(sendPactCommand.default, `(todos.delete-todo ${id})`)
+        .next()
+        .put({ type: REMOVE_TODO_SUCCEEDED, id })
         .next()
         .isDone();
     });
@@ -142,22 +174,40 @@ describe('Todos Saga', () => {
         .isDone();
     });
 
+    test.skip('updateTodoSaga() should return the updated todo', () => {
+      const id = 1;
+      const entry = 'A new todo';
+
+      sendPactCommand.default = jest.fn().mockReturnValue({ id, entry });
+
+      testSaga(updateTodoSaga, id, entry)
+        .next()
+        .put({ type: UPDATE_TODO_REQUEST, id, entry})
+        .next()
+        .call(sendPactCommand.default, `(todos.edit-todo ${id} ${entry})`)
+        .next()
+        .put({ type: UPDATE_TODO_SUCCEEDED, todo: { id, entry } })
+        .next()
+        .isDone();
+    });
+
     test('updateTodoSaga() should throw a failure on error', () => {
       sendPactCommand.default = jest.fn();
 
       const error = new Error('error');
       const id = 1;
-      const entry = 'a todo';
+      const entry = 'A new todo';
 
       testSaga(updateTodoSaga, id, entry)
         .next()
-        .put({ type: UPDATE_TODO_REQUEST, id, entry })
+        .put({ type: UPDATE_TODO_REQUEST, id, entry})
         .next()
         .throw(error)
         .put({ type: UPDATE_TODO_FAILED, error })
         .next()
         .isDone();
     });
+
   });
 
   describe('Reducer', () => {
