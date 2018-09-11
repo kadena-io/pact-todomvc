@@ -192,6 +192,12 @@ describe('Todos Saga', () => {
   });
 
   describe('Reducer', () => {
+    test('should return state on default', () => {
+      const expected = { ...initialState };
+      const actual = reducer(initialState, { type: 'not a valid action' });
+      expect(actual).toEqual(expected);
+    });
+
     test('FETCH_TODOS_REQUEST should set todosIsLoading to true', () => {
       const expected = { ...initialState };
       expected.todosIsLoading = true;
