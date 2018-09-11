@@ -1,7 +1,8 @@
-import fetch from 'isomorphic-fetch';
 import Pact from 'pact-lang-api';
 
 const KEY_PAIR = Pact.crypto.genKeyPair();
+
+// API_HOST is defined by Webpack
 
 export default async function sendPactCommand(cmd) {
   // Build the command JSON object
