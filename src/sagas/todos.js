@@ -39,7 +39,7 @@ let workingTodo;
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
     case FETCH_TODOS_REQUEST:
-      return { ...initialState, todosIsLoading: true };
+      return { ...state, todosIsLoading: true };
 
     case FETCH_TODOS_SUCCEEDED:
       return {
@@ -58,13 +58,13 @@ export default function reducer(state = initialState, action = {}) {
       };
 
     case SAVE_NEW_TODO_REQUEST:
-      return { ...initialState, todosIsLoading: true };
+      return { ...state, todosIsLoading: true };
 
     case SAVE_NEW_TODO_SUCCEEDED:
       return {
         ...state,
         todosError: null,
-        todos: [...state.todos, action.todo].sort((a, b) => a.id - b.id),
+        todos: [...state.todos, action.newTodo].sort((a, b) => a.id - b.id),
         todosIsLoading: false,
         newTodo: '',
       };
@@ -77,7 +77,7 @@ export default function reducer(state = initialState, action = {}) {
       };
 
     case REMOVE_TODO_REQUEST:
-      return { ...initialState, todosIsLoading: true };
+      return { ...state, todosIsLoading: true };
 
     case REMOVE_TODO_SUCCEEDED:
       return {
@@ -96,7 +96,7 @@ export default function reducer(state = initialState, action = {}) {
       };
 
     case UPDATE_TODO_REQUEST:
-      return { ...initialState, todosIsLoading: true };
+      return { ...state, todosIsLoading: true };
 
     case UPDATE_TODO_SUCCEEDED:
       return {
@@ -153,6 +153,10 @@ export function saveNewTodo(entry) {
   return { type: SAVE_NEW_TODO, entry };
 }
 
+export function updateTodo(todo) {
+  return { type: UPDATE_TODO, todo };
+}
+
 export function removeTodo(id) {
   return { type: REMOVE_TODO, id };
 }
@@ -160,24 +164,24 @@ export function removeTodo(id) {
 export function* fetchTodosSaga() {
   yield put({ type: FETCH_TODOS_REQUEST });
   try {
-    const todos = yield call(sendPactCommand, 'todos.read-todos');
+    const todos = yield call(sendPactCommand, '(todos.read-todos)');
     yield put({ type: FETCH_TODOS_SUCCEEDED, todos });
   } catch (error) {
     yield put({ type: FETCH_TODOS_FAILED, error });
   }
 }
 
-export function* saveNewTodoSaga(entry) {
+export function* saveNewTodoSaga({ entry }) {
   yield put({ type: SAVE_NEW_TODO_REQUEST });
   try {
-    const newTodo = yield call(sendPactCommand, `(todos.new-todo ${entry})`);
+    const newTodo = yield call(sendPactCommand, `(todos.new-todo ${JSON.stringify(entry)})`);
     yield put({ type: SAVE_NEW_TODO_SUCCEEDED, newTodo });
   } catch (error) {
     yield put({ type: SAVE_NEW_TODO_FAILED, error });
   }
 }
 
-export function* removeTodoSaga(id) {
+export function* removeTodoSaga({ id }) {
   yield put({ type: REMOVE_TODO_REQUEST, id });
   try {
     yield call(sendPactCommand, `(todos.delete-todo ${id})`);
@@ -187,11 +191,14 @@ export function* removeTodoSaga(id) {
   }
 }
 
-export function* updateTodoSaga(id, entry) {
-  yield put({ type: UPDATE_TODO_REQUEST, id, entry });
+export function* updateTodoSaga({ todo }) {
+  yield put({ type: UPDATE_TODO_REQUEST, todo });
   try {
-    const todo = yield call(sendPactCommand, `(todos.edit-todo ${id} ${entry})`);
-    yield put({ type: UPDATE_TODO_SUCCEEDED, todo });
+    const updatedTodo = yield call(
+      sendPactCommand,
+      `(todos.edit-todo ${todo.id} ${JSON.stringify(todo.entry)} ${todo.state})`
+    );
+    yield put({ type: UPDATE_TODO_SUCCEEDED, todo: updatedTodo });
   } catch (error) {
     yield put({ type: UPDATE_TODO_FAILED, error });
   }

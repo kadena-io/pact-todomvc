@@ -3,14 +3,24 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Loader from 'react-loader-spinner';
 
-import { fetchTodos } from '../../sagas/todos';
+import {
+  fetchTodos,
+  saveNewTodo,
+  removeTodo,
+  updateTodo,
+  updateNewTodoField,
+} from '../../sagas/todos';
 
+import { NewTodo } from './new-todo';
 import { Todo } from './todo';
 
 class TodosComponent extends React.PureComponent {
   constructor() {
     super();
     this.fetchTodos = this.fetchTodos.bind(this);
+    this.onRemoveTodo = this.onRemoveTodo.bind(this);
+    this.onUpdateTodo = this.onUpdateTodo.bind(this);
+    this.saveNewTodo = this.saveNewTodo.bind(this);
   }
 
   componentDidMount() {
@@ -18,12 +28,26 @@ class TodosComponent extends React.PureComponent {
   }
 
   fetchTodos() {
+    console.log('fetching todos');
     this.props.fetchTodos();
+  }
+
+  onRemoveTodo(id) {
+    this.props.onRemoveTodo(id);
+  }
+
+  onUpdateTodo(todo) {
+    this.props.updateTodo(todo);
+  }
+
+  saveNewTodo(entry) {
+    console.log('saveNewTodo, with entry: ', entry);
+    this.props.saveNewTodo(entry);
   }
 
   render() {
     const { todos, todosIsLoading, todosError } = this.props;
-
+    console.log('todos, todosIsLoading, todosError = ', todos, todosIsLoading, todosError);
     if (todosIsLoading) {
       return (
         <div className="todos">
@@ -51,10 +75,9 @@ class TodosComponent extends React.PureComponent {
             <input type="checkbox" /> Show Completed Items
           </div>
           <div className="todos-list">
-            <Todo id={-1} entry="" onComplete={this.props.saveNewTodo} />
-            <Todo id={-3} entry="Some Todo" state="completed" onComplete={this.props.saveNewTodo} />
+            <NewTodo saveNewTodo={this.saveNewTodo} />
             {todos.map((todo, i) => (
-              <Todo {...todo} key={i} />
+              <Todo key={i} {...todo} onRemove={this.onRemoveTodo} onUpdate={this.onUpdateTodo} />
             ))}
           </div>
           <p>
@@ -70,9 +93,11 @@ class TodosComponent extends React.PureComponent {
 
 const mapStateToProps = state => {
   /*
-    todosIsLoading: false,
-    todosError: null,
-    todos: []
+  todosIsLoading: false,
+  todosError: null,
+  todos: [],
+  newTodo: '',
+  editedTodo: null,
   */
   return { ...state.todos };
 };
@@ -87,6 +112,12 @@ const mapDispatchToProps = dispatch => {
     },
     removeTodo: id => {
       dispatch(removeTodo(id));
+    },
+    updateTodo: todo => {
+      dispatch(updateTodo(todo));
+    },
+    updateNewTodoField: entry => {
+      dispatch(updateNewTodoField(entry));
     },
   };
 };

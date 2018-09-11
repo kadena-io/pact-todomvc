@@ -26,7 +26,7 @@ export default async function sendPactCommand(cmd) {
   // Fire a POST to /api/v1/listen to listen for the result of a single command
   const listenResponse = await fetch(`${API_HOST}/api/v1/listen`, {
     method: 'POST',
-    body: commandJSON.cmds[0].hash,
+    body: JSON.stringify({ listen: commandJSON.cmds[0].hash }),
   });
   const listenResponseJSON = await listenResponse.json();
 

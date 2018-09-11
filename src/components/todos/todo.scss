@@ -51,6 +51,11 @@ $correct: #09c;
     }
   }
 
+  &.new {
+    .entry {
+      height: 1.5em;
+    }
+  }
   &.complete {
     color: $complete;
     .entry {
