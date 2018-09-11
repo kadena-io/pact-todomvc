@@ -34,7 +34,8 @@ import {
 
 import reducer from '../../src/sagas/todos';
 
-import * as sendPactCommand from '../../src/utils/send-pact-command';
+import sendPactCommand from '../../src/utils/send-pact-command';
+jest.mock('../../src/utils/send-pact-command');
 
 const initialState = {
   todosIsLoading: false,
@@ -78,22 +79,18 @@ describe('Todos Saga', () => {
 
   describe('Sagas', () => {
     test('fetchTodosSaga() should return an array of todos', () => {
-      sendPactCommand.default = jest.fn().mockReturnValue(mockTodos);
-
       testSaga(fetchTodosSaga)
         .next()
         .put({ type: FETCH_TODOS_REQUEST })
         .next()
-        .call(sendPactCommand.default, 'todos.read-todos')
-        .next()
+        .call(sendPactCommand, 'todos.read-todos')
+        .next(mockTodos)
         .put({ type: FETCH_TODOS_SUCCEEDED, todos: mockTodos })
         .next()
         .isDone();
     });
 
     test('fetchTodosSaga() should throw a failure on error', () => {
-      sendPactCommand.default = jest.fn();
-
       const error = new Error('error');
 
       testSaga(fetchTodosSaga)
@@ -106,25 +103,21 @@ describe('Todos Saga', () => {
         .isDone();
     });
 
-    test.skip('saveNewTodoSaga() should return a newly-created todo', () => {
-      sendPactCommand.default = jest.fn().mockReturnValue(mockTodos[0]);
-
+    test('saveNewTodoSaga() should return a newly-created todo', () => {
       const entry = 'A new todo';
 
-      testSaga(saveNewTodoSaga)
+      testSaga(saveNewTodoSaga, entry)
         .next()
         .put({ type: SAVE_NEW_TODO_REQUEST })
         .next()
-        .call(sendPactCommand.default, `(todos.new-todo ${entry})`)
-        .next()
-        .put({ type: SAVE_NEW_TODO_SUCCEEDED, todo: mockTodos[0] })
+        .call(sendPactCommand, `(todos.new-todo ${entry})`)
+        .next(mockTodos[0])
+        .put({ type: SAVE_NEW_TODO_SUCCEEDED, newTodo: mockTodos[0] })
         .next()
         .isDone();
     });
 
     test('saveNewTodoSaga() should throw a failure on error', () => {
-      sendPactCommand.default = jest.fn();
-
       const error = new Error('error');
       const entry = 'a todo';
 
@@ -138,25 +131,21 @@ describe('Todos Saga', () => {
         .isDone();
     });
 
-    test.skip('removeTodoSaga() should return the id of the removed todo', () => {
+    test('removeTodoSaga() should return the id of the removed todo', () => {
       const id = 1;
 
-      sendPactCommand.default = jest.fn().mockReturnValue(id);
-
-      testSaga(removeTodoSaga)
+      testSaga(removeTodoSaga, id)
         .next()
-        .put({ type: REMOVE_TODO_REQUEST })
+        .put({ type: REMOVE_TODO_REQUEST, id })
         .next()
-        .call(sendPactCommand.default, `(todos.delete-todo ${id})`)
-        .next()
+        .call(sendPactCommand, `(todos.delete-todo ${id})`)
+        .next(id)
         .put({ type: REMOVE_TODO_SUCCEEDED, id })
         .next()
         .isDone();
     });
 
     test('removeTodoSaga() should throw a failure on error', () => {
-      sendPactCommand.default = jest.fn();
-
       const error = new Error('error');
       const id = 1;
 
@@ -170,26 +159,23 @@ describe('Todos Saga', () => {
         .isDone();
     });
 
-    test.skip('updateTodoSaga() should return the updated todo', () => {
+    test('updateTodoSaga() should return the updated todo', () => {
       const id = 1;
       const entry = 'A new todo';
-
-      sendPactCommand.default = jest.fn().mockReturnValue({ id, entry });
+      const todo = { id, entry, status: 'incomplete' };
 
       testSaga(updateTodoSaga, id, entry)
         .next()
         .put({ type: UPDATE_TODO_REQUEST, id, entry })
         .next()
-        .call(sendPactCommand.default, `(todos.edit-todo ${id} ${entry})`)
-        .next()
-        .put({ type: UPDATE_TODO_SUCCEEDED, todo: { id, entry } })
+        .call(sendPactCommand, `(todos.edit-todo ${id} ${entry})`)
+        .next(todo)
+        .put({ type: UPDATE_TODO_SUCCEEDED, todo})
         .next()
         .isDone();
     });
 
     test('updateTodoSaga() should throw a failure on error', () => {
-      sendPactCommand.default = jest.fn();
-
       const error = new Error('error');
       const id = 1;
       const entry = 'A new todo';
