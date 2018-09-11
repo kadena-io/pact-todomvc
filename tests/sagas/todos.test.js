@@ -170,7 +170,7 @@ describe('Todos Saga', () => {
         .next()
         .call(sendPactCommand, `(todos.edit-todo ${id} ${entry})`)
         .next(todo)
-        .put({ type: UPDATE_TODO_SUCCEEDED, todo})
+        .put({ type: UPDATE_TODO_SUCCEEDED, todo })
         .next()
         .isDone();
     });
