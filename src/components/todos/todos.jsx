@@ -51,6 +51,8 @@ class TodosComponent extends React.PureComponent {
             <input type="checkbox" /> Show Completed Items
           </div>
           <div className="todos-list">
+            <Todo id={-1} entry="" onComplete={this.props.saveNewTodo} />
+            <Todo id={-3} entry="Some Todo" state="completed" onComplete={this.props.saveNewTodo} />
             {todos.map((todo, i) => (
               <Todo {...todo} key={i} />
             ))}

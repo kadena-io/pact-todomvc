@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 import './todo.scss';
 
@@ -7,20 +9,18 @@ export const Todo = ({ id, entry, state, onEdit, onRemove, onComplete }) => {
   const clickRemove = () => onRemove(id);
   const clickComplete = () => onComplete(id);
 
-  const updateEntry = e => {
+  const changeEntry = e => {
     onUpdate(id, e.currentTarget.value.trim());
   };
 
   const blurEntry = e => {
     const value = e.currentTarget.value.trim();
-    console.log('Blur', id, entry, value);
     if (value !== entry) {
       onEdit(id, value);
     }
   };
 
   const entryKeyDown = e => {
-    console.log('Blur', id, entry, e.keyCode);
     if (e.keyCode === 13) {
       e.currentTarget.blur();
     }
@@ -28,14 +28,26 @@ export const Todo = ({ id, entry, state, onEdit, onRemove, onComplete }) => {
 
   return (
     <div className={`todo ${state}`}>
-      <div className="completed-box">
-        <button onClick={clickComplete}>Complete</button>>
+      <div className="check">
+        <button onClick={clickComplete}>
+          <FontAwesomeIcon icon={faCheck} />
+        </button>
       </div>
       <div className="entry">
-        <input type={entry} onUpdate={updateEntry} onKeyDown={entryKeyDown} onBlur={blurEntry} />
+        <input
+          type="text"
+          className={entry.length < 1 ? 'empty' : ''}
+          value={entry}
+          onChange={changeEntry}
+          onKeyDown={entryKeyDown}
+          onBlur={blurEntry}
+          placeholder="New Todo…"
+        />
       </div>
       <div className="remove">
-        <button onClick={clickRemove}>Remove</button>
+        <button onClick={clickRemove}>
+          <FontAwesomeIcon icon={faTimes} />
+        </button>
       </div>
     </div>
   );
