@@ -77,7 +77,7 @@ describe('sendPactCommand()', () => {
     expect(fetch.mock.calls[1][0]).toMatch(/\/api\/v1\/listen$/);
     expect(fetch.mock.calls[1][1]).toEqual({
       method: 'POST',
-      body: mockSendCommandJSON.cmds[0].hash,
+      body: JSON.stringify({ listen: mockSendCommandJSON.cmds[0].hash }),
     });
 
     expect(data).toEqual(mockListenSuccessJSON.response.result.data);
