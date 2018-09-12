@@ -29,7 +29,6 @@ export const TOGGLE_TODO_STATE_FAILED = 'pact-todomvc/todos/TOGGLE_TODO_STATE_FA
 
 export const CHANGE_TODO_ENTRY = 'pact-todomvc/todos/CHANGE_TODO_ENTRY';
 export const UPDATE_NEW_TODO_FIELD = 'pact-todomvc/todos/UPDATE_NEW_TODO_FIELD';
-export const RESET_NEW_TODO_FIELD = 'pact-todomvc/todos/RESET_NEW_TODO_FIELD';
 
 const initialState = {
   todosIsLoading: false,
@@ -153,9 +152,6 @@ export default function reducer(state = initialState, action = {}) {
 
     case UPDATE_NEW_TODO_FIELD:
       return { ...state, newTodo: action.newTodo };
-
-    case RESET_NEW_TODO_FIELD:
-      return { ...state, newTodo: '' };
 
     default:
       return state;

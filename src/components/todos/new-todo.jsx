@@ -12,13 +12,7 @@ export const NewTodo = ({ saveNewTodo }) => {
   return (
     <div className="todo new">
       <div className="entry">
-        <input
-          type="text"
-          className="empty"
-          //           value={this.props.newTodo}
-          onKeyDown={entryKeyDown}
-          placeholder="New Todo…"
-        />
+        <input type="text" className="empty" onKeyDown={entryKeyDown} placeholder="New Todo…" />
       </div>
     </div>
   );

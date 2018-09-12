@@ -4,6 +4,7 @@ node_modules
 *.conf
 *.sh
 *.png
+__snapshots__
 pact
 log
 coverage

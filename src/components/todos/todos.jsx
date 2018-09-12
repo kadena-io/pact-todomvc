@@ -16,7 +16,7 @@ import {
 import { NewTodo } from './new-todo';
 import { Todo } from './todo';
 
-class TodosComponent extends React.PureComponent {
+export class TodosComponent extends React.PureComponent {
   constructor() {
     super();
     this.fetchTodos = this.fetchTodos.bind(this);
@@ -59,7 +59,11 @@ class TodosComponent extends React.PureComponent {
     const { todos, todosIsLoading, todosError } = this.props;
     let dom;
     if (todosIsLoading) {
-      dom = <Loader type="TailSpin" color="#3cf" />;
+      dom = (
+        <div className="loading">
+          <Loader type="TailSpin" color="#3cf" />
+        </div>
+      );
     } else if (todosError !== null) {
       dom = <div className="error">Error loading todos</div>;
     } else {
@@ -102,7 +106,7 @@ const mapStateToProps = state => {
   newTodo: '',
   editedTodo: null,
   */
-  return { ...state.todos };
+  return { ...state.todos, todosIsLoading: true };
 };
 
 const mapDispatchToProps = dispatch => {
