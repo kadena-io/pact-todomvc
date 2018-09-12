@@ -33,6 +33,7 @@ exports[`Todo Component should render a todo 1`] = `
   >
     <input
       className=""
+      disabled={false}
       onBlur={[Function]}
       onChange={[Function]}
       onKeyDown={[Function]}

@@ -1,7 +1,6 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
 import { shallow } from 'enzyme';
-import Loader from 'react-loader-spinner';
 
 import { TodosComponent } from '../../../src/components/todos/todos';
 import { NewTodo } from '../../../src/components/todos/new-todo';
@@ -84,15 +83,9 @@ describe('Todos Component', () => {
       test('should render an <h1>Todos</div> and a root element with classname "todos"', () => {
         const component = shallow(<TodosComponent {...todosProps} />);
         expect(component.find('h1').text()).toEqual('Todos');
-        expect(component.find('div .show-completed').exists()).toBeTruthy();
         expect(component.find('div .todos-list').exists()).toBeTruthy();
         expect(component.find(NewTodo).exists()).toBeTruthy();
         expect(component.find(Todo).exists()).toBeTruthy();
-      });
-
-      test('should render a <Loader /> if todoIsLoading = true', () => {
-        const component = shallow(<TodosComponent {...todosProps} todosIsLoading={true} />);
-        expect(component.find(Loader).exists()).toBeTruthy();
       });
 
       test('should render a <div className="error" /> if todoError !== null', () => {
