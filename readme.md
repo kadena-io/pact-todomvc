@@ -12,6 +12,8 @@
 
 `npm start:pact`: Start the Pact Server
 
+`npm pact:seed`: Seed the blockchain
+
 `npm start:dev`: Start the Webpack Dev Server
 
 `npm test`: Run Jest

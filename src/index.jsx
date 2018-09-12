@@ -8,8 +8,6 @@ import { createBrowserHistory } from 'history';
 import { applyMiddleware, compose, createStore, combineReducers } from 'redux';
 import { connectRouter, routerMiddleware, ConnectedRouter } from 'connected-react-router';
 
-import { Switch } from 'react-router';
-
 import { Provider } from 'react-redux';
 
 import createSagaMiddleware from 'redux-saga';

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Loader from 'react-loader-spinner';
 
@@ -68,23 +67,18 @@ export class TodosComponent extends React.PureComponent {
       dom = <div className="error">Error loading todos</div>;
     } else {
       dom = (
-        <div>
-          <div className="show-completed">
-            <input type="checkbox" /> Show Completed Items
-          </div>
-          <div className="todos-list">
-            <NewTodo saveNewTodo={this.saveNewTodo} />
-            {todos.map((todo, i) => (
-              <Todo
-                key={i}
-                {...todo}
-                onRemove={this.onRemoveTodo}
-                onChangeEntry={this.onChangeEntry}
-                onUpdate={this.onUpdateTodo}
-                onToggleState={this.onToggleState}
-              />
-            ))}
-          </div>
+        <div className="todos-list">
+          <NewTodo saveNewTodo={this.saveNewTodo} />
+          {todos.map((todo, i) => (
+            <Todo
+              key={i}
+              {...todo}
+              onRemove={this.onRemoveTodo}
+              onChangeEntry={this.onChangeEntry}
+              onUpdate={this.onUpdateTodo}
+              onToggleState={this.onToggleState}
+            />
+          ))}
         </div>
       );
     }
