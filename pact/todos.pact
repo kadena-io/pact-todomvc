@@ -58,7 +58,7 @@
           "entry": entry
         })
       ;; return json of stored values
-      {"id": id, "status":ACTIVE, "entry":entry}
+      {"id": id, "state":ACTIVE, "entry":entry}
     )
   )
 

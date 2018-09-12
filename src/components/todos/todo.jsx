@@ -4,21 +4,18 @@ import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 import './todo.scss';
 
-export const Todo = ({ id, entry, status, onUpdate, onRemove }) => {
+export const Todo = ({ id, entry, state, deleted, onChangeEntry, onUpdate, onRemove }) => {
   const clickRemove = () => onRemove(id);
   const clickComplete = () => {
-    onUpdate({ id, entry, status: 'completed' });
+    onUpdate({ id, entry, state: 'completed' });
   };
 
   const changeEntry = e => {
-    onUpdate({ id, entry: e.currentTarget.value, status });
+    onChangeEntry(id, e.currentTarget.value);
   };
 
   const blurEntry = e => {
-    const value = e.currentTarget.value;
-    if (value !== entry) {
-      onUpdate({ id, entry: value, status });
-    }
+    onUpdate({ id, entry: e.currentTarget.value, state, deleted });
   };
 
   const entryKeyDown = e => {
@@ -28,7 +25,7 @@ export const Todo = ({ id, entry, status, onUpdate, onRemove }) => {
   };
 
   return (
-    <div className={`todo ${status}`}>
+    <div className={`todo ${state}`}>
       <div className="check">
         <button onClick={clickComplete}>
           <FontAwesomeIcon icon={faCheck} />

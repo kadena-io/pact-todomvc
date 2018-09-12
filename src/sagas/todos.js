@@ -22,7 +22,7 @@ export const UPDATE_TODO_REQUEST = 'pact-todomvc/todos/UPDATE_TODO_REQUEST';
 export const UPDATE_TODO_SUCCEEDED = 'pact-todomvc/todos/UPDATE_TODO_SUCCEEDED';
 export const UPDATE_TODO_FAILED = 'pact-todomvc/todos/UPDATE_TODO_FAILED';
 
-export const EDIT_TODO = 'pact-todomvc/todos/EDIT_TODO';
+export const CHANGE_TODO_ENTRY = 'pact-todomvc/todos/CHANGE_TODO_ENTRY';
 export const UPDATE_TODO_TITLE = 'pact-todomvc/todos/UPDATE_TODO_TITLE';
 export const UPDATE_NEW_TODO_FIELD = 'pact-todomvc/todos/UPDATE_NEW_TODO_FIELD';
 export const RESET_NEW_TODO_FIELD = 'pact-todomvc/todos/RESET_NEW_TODO_FIELD';
@@ -102,10 +102,9 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         todosError: null,
-        todos: state.todos
-          .filter(todo => todo.id !== action.todo.id)
-          .push(action.todo)
-          .sort((a, b) => a.id - b.id),
+        todos: [...state.todos.filter(todo => todo.id !== action.todo.id), action.todo].sort(
+          (a, b) => a.id - b.id
+        ),
         todosIsLoading: false,
       };
 
@@ -116,18 +115,14 @@ export default function reducer(state = initialState, action = {}) {
         todosIsLoading: false,
       };
 
-    case EDIT_TODO:
-      return {
-        ...state,
-        editedTodo: state.todos.find(todo => todo.id === action.id),
-      };
-
-    case UPDATE_TODO_TITLE:
+    case CHANGE_TODO_ENTRY:
       workingTodo = state.todos.find(todo => todo.id === action.id);
-      workingTodo.title = action.title;
+      workingTodo.entry = action.entry;
       return {
         ...state,
-        editedTodo: { ...state.editedTodo, title: action.title },
+        todos: [...state.todos.filter(todo => todo.id !== action.id), workingTodo].sort(
+          (a, b) => a.id - b.id
+        ),
       };
 
     case UPDATE_NEW_TODO_FIELD:
@@ -151,6 +146,10 @@ export function fetchTodos() {
 
 export function saveNewTodo(entry) {
   return { type: SAVE_NEW_TODO, entry };
+}
+
+export function changeEntry(id, entry) {
+  return { type: CHANGE_TODO_ENTRY, id, entry };
 }
 
 export function updateTodo(todo) {
@@ -194,11 +193,8 @@ export function* removeTodoSaga({ id }) {
 export function* updateTodoSaga({ todo }) {
   yield put({ type: UPDATE_TODO_REQUEST, todo });
   try {
-    const updatedTodo = yield call(
-      sendPactCommand,
-      `(todos.edit-todo ${todo.id} ${JSON.stringify(todo.entry)} ${todo.state})`
-    );
-    yield put({ type: UPDATE_TODO_SUCCEEDED, todo: updatedTodo });
+    yield call(sendPactCommand, `(todos.edit-todo ${todo.id} ${JSON.stringify(todo.entry)})`);
+    yield put({ type: UPDATE_TODO_SUCCEEDED, todo });
   } catch (error) {
     yield put({ type: UPDATE_TODO_FAILED, error });
   }
