@@ -28,7 +28,6 @@
     "pact-lang-api": "^1.0.6",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
-    "react-loader-spinner": "^2.1.0",
     "react-redux": "^5.0.7",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",

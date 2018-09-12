@@ -50,6 +50,7 @@ export const Todo = ({
           onKeyDown={entryKeyDown}
           onBlur={blurEntry}
           placeholder="Enter Todo…"
+          disabled={state === 'completed'}
         />
       </div>
       <div className="remove">

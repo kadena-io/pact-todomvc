@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import Loader from 'react-loader-spinner';
 
 import {
   fetchTodos,
@@ -55,15 +54,9 @@ export class TodosComponent extends React.PureComponent {
   }
 
   render() {
-    const { todos, todosIsLoading, todosError } = this.props;
+    const { todos, todosError } = this.props;
     let dom;
-    if (todosIsLoading) {
-      dom = (
-        <div className="loading">
-          <Loader type="TailSpin" color="#3cf" />
-        </div>
-      );
-    } else if (todosError !== null) {
+    if (todosError !== null) {
       dom = <div className="error">Error loading todos</div>;
     } else {
       dom = (
