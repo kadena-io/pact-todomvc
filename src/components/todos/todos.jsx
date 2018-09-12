@@ -98,6 +98,7 @@ export class TodosComponent extends React.PureComponent {
   }
 }
 
+/* istanbul ignore next */
 const mapStateToProps = state => {
   /*
   todosIsLoading: false,
@@ -106,9 +107,10 @@ const mapStateToProps = state => {
   newTodo: '',
   editedTodo: null,
   */
-  return { ...state.todos, todosIsLoading: true };
+  return { ...state.todos };
 };
 
+/* istanbul ignore next */
 const mapDispatchToProps = dispatch => {
   return {
     fetchTodos: () => {
@@ -135,6 +137,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
+/* istanbul ignore next */
 export const Todos = connect(
   mapStateToProps,
   mapDispatchToProps

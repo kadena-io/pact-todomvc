@@ -1,8 +1,11 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
 import { shallow } from 'enzyme';
+import Loader from 'react-loader-spinner';
 
 import { TodosComponent } from '../../../src/components/todos/todos';
+import { NewTodo } from '../../../src/components/todos/new-todo';
+import { Todo } from '../../../src/components/todos/todo';
 
 const todo = {
   id: 1,
@@ -77,33 +80,54 @@ describe('Todos Component', () => {
   });
 
   describe('Render', () => {
-    afterEach(() => {
-      jest.clearAllMocks();
+    describe('Top Level', () => {
+      test('should render an <h1>Todos</div> and a root element with classname "todos"', () => {
+        const component = shallow(<TodosComponent {...todosProps} />);
+        expect(component.find('h1').text()).toEqual('Todos');
+        expect(component.find('div .show-completed').exists()).toBeTruthy();
+        expect(component.find('div .todos-list').exists()).toBeTruthy();
+        expect(component.find(NewTodo).exists()).toBeTruthy();
+        expect(component.find(Todo).exists()).toBeTruthy();
+      });
+
+      test('should render a <Loader /> if todoIsLoading = true', () => {
+        const component = shallow(<TodosComponent {...todosProps} todosIsLoading={true} />);
+        expect(component.find(Loader).exists()).toBeTruthy();
+      });
+
+      test('should render a <div className="error" /> if todoError !== null', () => {
+        const component = shallow(
+          <TodosComponent {...todosProps} todosError="Error loading todos" />
+        );
+        expect(component.find('.error').exists()).toBeTruthy();
+      });
     });
 
-    test('should render a <TodosComponent/>', () => {
-      const component = renderer.create(<TodosComponent {...todosProps} />);
-      const tree = component.toJSON();
-      expect(tree).toMatchSnapshot();
-    });
-
-    test('should render an <h1>Todos</div> and a root element with classname "todos"', () => {
+    describe('Child Handlers', () => {
       const component = shallow(<TodosComponent {...todosProps} />);
-      expect(component.find('h1').text()).toEqual('Todos');
-      expect(component.find('div .show-completed').exists()).toBeTruthy();
-      expect(component.find('div .todos-list').exists()).toBeTruthy();
-    });
+      const instance = component.instance();
+      const todo = component.find(Todo);
 
-    test('should render a <Loader /> if todoIsLoading = true', () => {
-      const component = shallow(<TodosComponent {...todosProps} todosIsLoading={true} />);
-      expect(component.find('.loading').exists()).toBeTruthy();
-    });
+      test('NewTodo.saveNewTodo should call saveNewTodo()', () => {
+        const newTodo = component.find(NewTodo);
+        expect(newTodo.prop('saveNewTodo')).toEqual(instance.saveNewTodo);
+      });
 
-    test('should render a <div className="error" /> if todoError !== null', () => {
-      const component = shallow(
-        <TodosComponent {...todosProps} todosError="Error loading todos" />
-      );
-      expect(component.find('.error').exists()).toBeTruthy();
+      test('Todo.onRemove should call onRemoveTodo()', () => {
+        expect(todo.prop('onRemove')).toEqual(instance.onRemoveTodo);
+      });
+
+      test('Todo.onChangeEntry should call onChangeEntry()', () => {
+        expect(todo.prop('onChangeEntry')).toEqual(instance.onChangeEntry);
+      });
+
+      test('Todo.onUpdate should call onUpdateTodo()', () => {
+        expect(todo.prop('onUpdate')).toEqual(instance.onUpdateTodo);
+      });
+
+      test('Todo.onToggleState should call onToggleState()', () => {
+        expect(todo.prop('onToggleState')).toEqual(instance.onToggleState);
+      });
     });
   });
 });
