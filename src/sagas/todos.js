@@ -22,8 +22,12 @@ export const UPDATE_TODO_REQUEST = 'pact-todomvc/todos/UPDATE_TODO_REQUEST';
 export const UPDATE_TODO_SUCCEEDED = 'pact-todomvc/todos/UPDATE_TODO_SUCCEEDED';
 export const UPDATE_TODO_FAILED = 'pact-todomvc/todos/UPDATE_TODO_FAILED';
 
+export const TOGGLE_TODO_STATE = 'pact-todomvc/todos/TOGGLE_TODO_STATE';
+export const TOGGLE_TODO_STATE_REQUEST = 'pact-todomvc/todos/TOGGLE_TODO_STATE_REQUEST';
+export const TOGGLE_TODO_STATE_SUCCEEDED = 'pact-todomvc/todos/TOGGLE_TODO_STATE_SUCCEEDED';
+export const TOGGLE_TODO_STATE_FAILED = 'pact-todomvc/todos/TOGGLE_TODO_STATE_FAILED';
+
 export const CHANGE_TODO_ENTRY = 'pact-todomvc/todos/CHANGE_TODO_ENTRY';
-export const UPDATE_TODO_TITLE = 'pact-todomvc/todos/UPDATE_TODO_TITLE';
 export const UPDATE_NEW_TODO_FIELD = 'pact-todomvc/todos/UPDATE_NEW_TODO_FIELD';
 export const RESET_NEW_TODO_FIELD = 'pact-todomvc/todos/RESET_NEW_TODO_FIELD';
 
@@ -115,6 +119,28 @@ export default function reducer(state = initialState, action = {}) {
         todosIsLoading: false,
       };
 
+    case TOGGLE_TODO_STATE_REQUEST:
+      return { ...state, todosIsLoading: true };
+
+    case TOGGLE_TODO_STATE_SUCCEEDED:
+      workingTodo = state.todos.find(todo => todo.id === action.id);
+      workingTodo.state = action.state;
+      return {
+        ...state,
+        todos: [...state.todos.filter(todo => todo.id !== action.id), workingTodo].sort(
+          (a, b) => a.id - b.id
+        ),
+        todosError: null,
+        todosIsLoading: false,
+      };
+
+    case TOGGLE_TODO_STATE_FAILED:
+      return {
+        ...state,
+        todosError: action.error,
+        todosIsLoading: false,
+      };
+
     case CHANGE_TODO_ENTRY:
       workingTodo = state.todos.find(todo => todo.id === action.id);
       workingTodo.entry = action.entry;
@@ -156,6 +182,10 @@ export function updateTodo(todo) {
   return { type: UPDATE_TODO, todo };
 }
 
+export function toggleState(id, state) {
+  return { type: TOGGLE_TODO_STATE, id, state };
+}
+
 export function removeTodo(id) {
   return { type: REMOVE_TODO, id };
 }
@@ -167,6 +197,16 @@ export function* fetchTodosSaga() {
     yield put({ type: FETCH_TODOS_SUCCEEDED, todos });
   } catch (error) {
     yield put({ type: FETCH_TODOS_FAILED, error });
+  }
+}
+
+export function* toggleTodoStateSaga({ id, state }) {
+  yield put({ type: TOGGLE_TODO_STATE_REQUEST });
+  try {
+    yield call(sendPactCommand, `(todos.toggle-todo-status ${id})`);
+    yield put({ type: TOGGLE_TODO_STATE_SUCCEEDED, id, state });
+  } catch (error) {
+    yield put({ type: TOGGLE_TODO_STATE_FAILED, error });
   }
 }
 

@@ -4,7 +4,6 @@ import './todo.scss';
 export const NewTodo = ({ saveNewTodo }) => {
   const entryKeyDown = e => {
     if (e.keyCode === 13) {
-      console.log('save handler: ', e.currentTarget.value);
       saveNewTodo(e.currentTarget.value);
       e.currentTarget.value = '';
     }

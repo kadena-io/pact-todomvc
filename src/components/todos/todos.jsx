@@ -9,6 +9,7 @@ import {
   removeTodo,
   changeEntry,
   updateTodo,
+  toggleState,
   updateNewTodoField,
 } from '../../sagas/todos';
 
@@ -21,6 +22,7 @@ class TodosComponent extends React.PureComponent {
     this.fetchTodos = this.fetchTodos.bind(this);
     this.onRemoveTodo = this.onRemoveTodo.bind(this);
     this.onUpdateTodo = this.onUpdateTodo.bind(this);
+    this.onToggleState = this.onToggleState.bind(this);
     this.onChangeEntry = this.onChangeEntry.bind(this);
     this.saveNewTodo = this.saveNewTodo.bind(this);
   }
@@ -39,6 +41,10 @@ class TodosComponent extends React.PureComponent {
 
   onUpdateTodo(todo) {
     this.props.updateTodo(todo);
+  }
+
+  onToggleState(id, state) {
+    this.props.toggleState(id, state);
   }
 
   onChangeEntry(id, entry) {
@@ -71,6 +77,7 @@ class TodosComponent extends React.PureComponent {
                 onRemove={this.onRemoveTodo}
                 onChangeEntry={this.onChangeEntry}
                 onUpdate={this.onUpdateTodo}
+                onToggleState={this.onToggleState}
               />
             ))}
           </div>
@@ -111,6 +118,9 @@ const mapDispatchToProps = dispatch => {
     },
     updateTodo: todo => {
       dispatch(updateTodo(todo));
+    },
+    toggleState: (id, state) => {
+      dispatch(toggleState(id, state));
     },
     changeEntry: (id, entry) => {
       dispatch(changeEntry(id, entry));

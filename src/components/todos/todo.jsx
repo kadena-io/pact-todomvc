@@ -1,13 +1,23 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCircle as faCircleFill, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCircle as faCircleOutline } from '@fortawesome/free-regular-svg-icons';
 
 import './todo.scss';
 
-export const Todo = ({ id, entry, state, deleted, onChangeEntry, onUpdate, onRemove }) => {
+export const Todo = ({
+  id,
+  entry,
+  state,
+  deleted,
+  onChangeEntry,
+  onUpdate,
+  onRemove,
+  onToggleState,
+}) => {
   const clickRemove = () => onRemove(id);
-  const clickComplete = () => {
-    onUpdate({ id, entry, state: 'completed' });
+  const clickState = () => {
+    onToggleState(id, state === 'completed' ? 'active' : 'completed');
   };
 
   const changeEntry = e => {
@@ -27,8 +37,8 @@ export const Todo = ({ id, entry, state, deleted, onChangeEntry, onUpdate, onRem
   return (
     <div className={`todo ${state}`}>
       <div className="check">
-        <button onClick={clickComplete}>
-          <FontAwesomeIcon icon={faCheck} />
+        <button onClick={clickState}>
+          <FontAwesomeIcon icon={state === 'completed' ? faCircleFill : faCircleOutline} />
         </button>
       </div>
       <div className="entry">

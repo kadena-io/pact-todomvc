@@ -16,8 +16,7 @@ $correct: #09c;
   }
 
   .check button:hover {
-    background: #09c;
-    color: #fff;
+    color: #09c;
   }
 
   .remove button:hover {
@@ -56,10 +55,16 @@ $correct: #09c;
       height: 1.5em;
     }
   }
-  &.complete {
+  &.completed {
     color: $complete;
-    .entry {
-      text-decoration: strikethrough;
+
+    button {
+      color: #adadad;
+    }
+
+    .entry input {
+      color: #adadad;
+      text-decoration: line-through;
     }
   }
 }
