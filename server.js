@@ -13,12 +13,6 @@ app.get('*', function(req, res) {
     'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0'
   );
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-
-  //   if (req.path !== '/') {
-  //     return res.redirect(301, `http://${req.headers.host}/`);
-  //   } else {
-  //     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-  //   }
 });
 
 app.listen(port);
