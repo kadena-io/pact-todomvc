@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`New Todo Component should render a new todo 1`] = `
+<div
+  className="todo new"
+>
+  <div
+    className="entry"
+  >
+    <input
+      className="empty"
+      onKeyDown={[Function]}
+      placeholder="New Todo…"
+      type="text"
+    />
+  </div>
+</div>
+`;

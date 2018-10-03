@@ -1,0 +1,11 @@
+node_modules
+.*
+*.html
+*.conf
+*.sh
+*.png
+__snapshots__
+pact
+log
+coverage
+dist
