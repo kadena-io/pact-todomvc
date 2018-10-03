@@ -22,11 +22,6 @@
 
 `npm run prettier`: Run Prettier
 
-# Details
-
-To keep the pact<->vue interactions clear, we made them fully synchronous instead of using vue to hold the main application's state.
-Simply, for every change one makes to the todo list (besides filtering) that change is propagated back to pact and the application's full state is then reread via the `(todos.read-all)` command.
-
 ## Using the Pact Dev Server
 
 ### Configuration File
