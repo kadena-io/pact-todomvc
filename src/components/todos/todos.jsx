@@ -49,8 +49,8 @@ export class TodosComponent extends React.PureComponent {
     this.props.changeEntry(id, entry);
   }
 
-  saveNewTodo(entry) {
-    this.props.saveNewTodo(entry);
+  saveNewTodo(entry, date) {
+    this.props.saveNewTodo(entry, date);
   }
 
   render() {
@@ -103,8 +103,8 @@ const mapDispatchToProps = dispatch => {
     fetchTodos: () => {
       dispatch(fetchTodos());
     },
-    saveNewTodo: newTodo => {
-      dispatch(saveNewTodo(newTodo));
+    saveNewTodo: (newTodo, date) => {
+      dispatch(saveNewTodo(newTodo, date));
     },
     removeTodo: id => {
       dispatch(removeTodo(id));

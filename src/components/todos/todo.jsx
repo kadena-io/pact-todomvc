@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircle as faCircleFill, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCircle as faCircleFill, faTimes, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { faCircle as faCircleOutline } from '@fortawesome/free-regular-svg-icons';
 
 import './todo.scss';
@@ -8,6 +8,7 @@ import './todo.scss';
 export const Todo = ({
   id,
   entry,
+  date,
   state,
   deleted,
   onChangeEntry,
@@ -16,6 +17,7 @@ export const Todo = ({
   onToggleState,
 }) => {
   const clickRemove = () => onRemove(id);
+  const clickEdit = () => onUpdate(id);
   const clickState = () => {
     onToggleState(id, state === 'completed' ? 'active' : 'completed');
   };
@@ -53,9 +55,23 @@ export const Todo = ({
           disabled={state === 'completed'}
         />
       </div>
+      <div className="due-date">
+        <input
+          type="date"
+          className={entry.length < 1 ? 'empty' : ''}
+          defaultValue={date}
+          onKeyDown={entryKeyDown}
+          disabled={state === 'completed'}
+        />
+      </div>
       <div className="remove">
         <button onClick={clickRemove}>
           <FontAwesomeIcon icon={faTimes} />
+        </button>
+      </div>
+      <div className="edit">
+        <button onClick={clickEdit}>
+          <FontAwesomeIcon icon={faEdit} />
         </button>
       </div>
     </div>

@@ -166,8 +166,8 @@ export function fetchTodos() {
   return { type: FETCH_TODOS };
 }
 
-export function saveNewTodo(entry) {
-  return { type: SAVE_NEW_TODO, entry };
+export function saveNewTodo(entry, date) {
+  return { type: SAVE_NEW_TODO, entry, date };
 }
 
 export function changeEntry(id, entry) {
@@ -206,10 +206,10 @@ export function* toggleTodoStateSaga({ id, state }) {
   }
 }
 
-export function* saveNewTodoSaga({ entry }) {
+export function* saveNewTodoSaga({ entry, date }) {
   yield put({ type: SAVE_NEW_TODO_REQUEST });
   try {
-    const newTodo = yield call(sendPactCommand, `(todos.new-todo ${JSON.stringify(entry)})`);
+    const newTodo = yield call(sendPactCommand, `(todos.new-todo ${JSON.stringify(entry)} ${JSON.stringify(date)})`);
     yield put({ type: SAVE_NEW_TODO_SUCCEEDED, newTodo });
   } catch (error) {
     yield put({ type: SAVE_NEW_TODO_FAILED, error });
