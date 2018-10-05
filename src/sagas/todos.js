@@ -147,6 +147,7 @@ export default function reducer(state = initialState, action = {}) {
     case CHANGE_TODO_ENTRY:
       workingTodo = state.todos.find(todo => todo.id === action.id);
       workingTodo.entry = action.entry;
+      console.log('change_todo')
       return {
         ...state,
         todos: [...state.todos.filter(todo => todo.id !== action.id), workingTodo].sort(
@@ -185,10 +186,12 @@ export function saveNewTodo(entry, date) {
 }
 
 export function changeEntry(id, entry, date) {
+  console.log('change entry2')
   return { type: CHANGE_TODO_ENTRY, id, entry, date };
 }
 
 export function updateTodo(todo) {
+  console.log('update entry')
   return { type: UPDATE_TODO, todo };
 }
 

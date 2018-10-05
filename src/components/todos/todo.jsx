@@ -23,6 +23,11 @@ export const Todo = ({
     date = e.currentTarget.value;
   };
 
+  const handleEntry = e => {
+    e.preventDefault();
+    entry = e.currentTarget.value;
+  };
+
   const clickRemove = () => onRemove(id);
   const clickState = () => {
     onToggleState(id, state === 'completed' ? 'active' : 'completed');
@@ -31,11 +36,12 @@ export const Todo = ({
     onClickEdit(id);
   }
   const changeEntry = e => {
-    onChangeEntry(id, e.currentTarget.value);
+    onChangeEntry(id, e.currentTarget.value, date);
   };
 
   const blurEntry = e => {
-    onUpdate({ id, entry: e.currentTarget.value, date: date, state, deleted });
+    console.log('blur entry has been called')
+    onUpdate({ id, entry, date, state, deleted });
   };
 
   const entryKeyDown = e => {
@@ -69,14 +75,21 @@ export const Todo = ({
         }
       </div>
       <div className="due-date">
-        <input
-          type="date"
-          className={entry.length < 1 ? 'empty' : ''}
-          defaultValue={date}
-          onKeyDown={entryKeyDown}
-          onChange={handleDate}
-          disabled={state === 'completed'}
-        />
+        {editStatus
+          ?
+          <input
+            type="date"
+            className={entry.length < 1 ? 'empty' : ''}
+            defaultValue={date}
+            onBlur={blurEntry}
+            onKeyDown={entryKeyDown}
+            onChange={handleDate}
+            min={new Date().toISOString().slice(0,10)}
+            disabled={state === 'completed'}
+          />
+          :
+          <span>{date}</span>
+        }
       </div>
       <div className="edit">
         <button onClick={clickEdit} disabled={state === 'completed'} >

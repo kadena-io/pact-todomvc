@@ -47,8 +47,8 @@ export class TodosComponent extends React.PureComponent {
     this.props.toggleState(id, state);
   }
 
-  onChangeEntry(id, entry) {
-    this.props.changeEntry(id, entry);
+  onChangeEntry(id, entry, date) {
+    this.props.changeEntry(id, entry, date);
   }
 
   saveNewTodo(entry, date) {
@@ -60,7 +60,6 @@ export class TodosComponent extends React.PureComponent {
   }
 
   render() {
-    console.log(this.props)
     const { todos, todosError, editStatus } = this.props;
     let dom;
     if (todosError !== null) {
