@@ -37,10 +37,10 @@ export const Todo = ({
   }
   const changeEntry = e => {
     onChangeEntry(id, e.currentTarget.value, date);
+
   };
 
   const blurEntry = e => {
-    console.log('blur entry has been called')
     onUpdate({ id, entry, date, state, deleted });
   };
 

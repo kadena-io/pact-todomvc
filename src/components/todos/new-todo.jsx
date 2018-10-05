@@ -19,7 +19,7 @@ export const NewTodo = ({ saveNewTodo }) => {
     if (e.keyCode === 13) {
       date=date||new Date().toISOString().slice(0,10);
       saveNewTodo(entry, date);
-      entry='';
+      e.currentTarget.value = '';
     }
   };
 
