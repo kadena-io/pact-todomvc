@@ -27,6 +27,7 @@ export const TOGGLE_TODO_STATE_REQUEST = 'pact-todomvc/todos/TOGGLE_TODO_STATE_R
 export const TOGGLE_TODO_STATE_SUCCEEDED = 'pact-todomvc/todos/TOGGLE_TODO_STATE_SUCCEEDED';
 export const TOGGLE_TODO_STATE_FAILED = 'pact-todomvc/todos/TOGGLE_TODO_STATE_FAILED';
 
+export const CHANGE_EDIT_STATUS = 'pact-todomvc/todos/CHANGE_EDIT_STATUS';
 export const CHANGE_TODO_ENTRY = 'pact-todomvc/todos/CHANGE_TODO_ENTRY';
 export const UPDATE_NEW_TODO_FIELD = 'pact-todomvc/todos/UPDATE_NEW_TODO_FIELD';
 
@@ -35,6 +36,7 @@ const initialState = {
   todosError: null,
   todos: [],
   newTodo: '',
+  editStatus: false,
   editedTodo: null,
 };
 
@@ -48,7 +50,9 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         todosError: null,
-        todos: action.todos.sort((a, b) => a.id - b.id),
+        todos: action.todos.sort((a, b) => a.id - b.id).map(todo=>{
+          return {...todo, editStatus: false}
+        }),
         todosIsLoading: false,
       };
 
@@ -105,7 +109,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         todosError: null,
-        todos: [...state.todos.filter(todo => todo.id !== action.todo.id), action.todo].sort(
+        todos: [...state.todos.filter(todo => todo.id !== action.todo.id), {...action.todo, editStatus: false}].sort(
           (a, b) => a.id - b.id
         ),
         todosIsLoading: false,
@@ -150,6 +154,16 @@ export default function reducer(state = initialState, action = {}) {
         ),
       };
 
+    case CHANGE_EDIT_STATUS:
+      workingTodo = state.todos.find(todo => todo.id === action.id);
+      workingTodo.editStatus = !workingTodo.editStatus;
+      return {
+        ...state,
+        todos: [...state.todos.filter(todo => todo.id !== action.id), workingTodo].sort(
+          (a, b) => a.id - b.id
+        ),
+      };
+
     case UPDATE_NEW_TODO_FIELD:
       return { ...state, newTodo: action.newTodo };
 
@@ -170,8 +184,8 @@ export function saveNewTodo(entry, date) {
   return { type: SAVE_NEW_TODO, entry, date };
 }
 
-export function changeEntry(id, entry) {
-  return { type: CHANGE_TODO_ENTRY, id, entry };
+export function changeEntry(id, entry, date) {
+  return { type: CHANGE_TODO_ENTRY, id, entry, date };
 }
 
 export function updateTodo(todo) {
@@ -184,6 +198,10 @@ export function toggleState(id, state) {
 
 export function removeTodo(id) {
   return { type: REMOVE_TODO, id };
+}
+
+export function changeEditStatus(id) {
+  return { type: CHANGE_EDIT_STATUS, id }
 }
 
 export function* fetchTodosSaga() {
@@ -229,7 +247,7 @@ export function* removeTodoSaga({ id }) {
 export function* updateTodoSaga({ todo }) {
   yield put({ type: UPDATE_TODO_REQUEST, todo });
   try {
-    yield call(sendPactCommand, `(todos.edit-todo ${todo.id} ${JSON.stringify(todo.entry)})`);
+    yield call(sendPactCommand, `(todos.edit-todo ${todo.id} ${JSON.stringify(todo.entry)}  ${JSON.stringify(todo.date)})`);
     yield put({ type: UPDATE_TODO_SUCCEEDED, todo });
   } catch (error) {
     yield put({ type: UPDATE_TODO_FAILED, error });

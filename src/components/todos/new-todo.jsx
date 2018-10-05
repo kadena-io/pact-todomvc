@@ -17,9 +17,7 @@ export const NewTodo = ({ saveNewTodo }) => {
 
   const entryKeyDown = e => {
     if (e.keyCode === 13) {
-      let newDate = new Date();
-      date = date || newDate.toISOString().slice(0,10);
-      console.log(entry, date)
+      date=date||new Date().toISOString().slice(0,10);
       saveNewTodo(entry, date);
       entry='';
     }
@@ -28,12 +26,12 @@ export const NewTodo = ({ saveNewTodo }) => {
   return (
     <div className="todo new">
       <div className="entry">
-        <label>New Task</label>
-        <input id= "new-todo" type="text" className="empty" onChange={handleEntry} onKeyDown={entryKeyDown} placeholder="New Todo…" />
+        <label>New Todo</label>
+        <input id= "new-todo" type="text" name="entry" className="empty" onChange={handleEntry} onKeyDown={entryKeyDown} placeholder="New Todo…" />
       </div>
       <div className="date">
         <label>Due Date</label>
-        <input id="due-date" type="date" onChange={handleDate} onKeyDown={entryKeyDown} placeholder="Enter Due Date..." />
+        <input id="due-date" type="date" name="due-date" onChange={handleDate} onKeyDown={entryKeyDown} placeholder="Enter Due Date..." min={new Date().toISOString().slice(0,10)}/>
       </div>
     </div>
   );

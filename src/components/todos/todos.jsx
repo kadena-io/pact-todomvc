@@ -9,6 +9,7 @@ import {
   updateTodo,
   toggleState,
   updateNewTodoField,
+  changeEditStatus,
 } from '../../sagas/todos';
 
 import { NewTodo } from './new-todo';
@@ -23,6 +24,7 @@ export class TodosComponent extends React.PureComponent {
     this.onToggleState = this.onToggleState.bind(this);
     this.onChangeEntry = this.onChangeEntry.bind(this);
     this.saveNewTodo = this.saveNewTodo.bind(this);
+    this.onClickEdit = this.onClickEdit.bind(this);
   }
 
   componentDidMount() {
@@ -53,8 +55,13 @@ export class TodosComponent extends React.PureComponent {
     this.props.saveNewTodo(entry, date);
   }
 
+  onClickEdit(id) {
+    this.props.changeEditStatus(id);
+  }
+
   render() {
-    const { todos, todosError } = this.props;
+    console.log(this.props)
+    const { todos, todosError, editStatus } = this.props;
     let dom;
     if (todosError !== null) {
       dom = <div className="error">Error loading todos</div>;
@@ -62,16 +69,19 @@ export class TodosComponent extends React.PureComponent {
       dom = (
         <div className="todos-list">
           <NewTodo saveNewTodo={this.saveNewTodo} />
-          {todos.map((todo, i) => (
-            <Todo
-              key={i}
-              {...todo}
-              onRemove={this.onRemoveTodo}
-              onChangeEntry={this.onChangeEntry}
-              onUpdate={this.onUpdateTodo}
-              onToggleState={this.onToggleState}
-            />
-          ))}
+          <ul>
+            {todos.map((todo, i) => (
+              <Todo
+                key={i}
+                {...todo}
+                onRemove={this.onRemoveTodo}
+                onChangeEntry={this.onChangeEntry}
+                onUpdate={this.onUpdateTodo}
+                onToggleState={this.onToggleState}
+                onClickEdit = {this.onClickEdit}
+              />
+            ))}
+          </ul>
         </div>
       );
     }
@@ -115,12 +125,15 @@ const mapDispatchToProps = dispatch => {
     toggleState: (id, state) => {
       dispatch(toggleState(id, state));
     },
-    changeEntry: (id, entry) => {
-      dispatch(changeEntry(id, entry));
+    changeEntry: (id, entry, date) => {
+      dispatch(changeEntry(id, entry, date));
     },
-    updateNewTodoField: entry => {
-      dispatch(updateNewTodoField(entry));
+    updateNewTodoField: (entry, date) => {
+      dispatch(updateNewTodoField(entry, date));
     },
+    changeEditStatus: (id) => {
+      dispatch(changeEditStatus(id))
+    }
   };
 };
 

@@ -11,23 +11,31 @@ export const Todo = ({
   date,
   state,
   deleted,
+  editStatus,
   onChangeEntry,
   onUpdate,
   onRemove,
   onToggleState,
+  onClickEdit,
 }) => {
+  const handleDate = e => {
+    e.preventDefault();
+    date = e.currentTarget.value;
+  };
+
   const clickRemove = () => onRemove(id);
-  const clickEdit = () => onUpdate(id);
   const clickState = () => {
     onToggleState(id, state === 'completed' ? 'active' : 'completed');
   };
-
+  const clickEdit = () => {
+    onClickEdit(id);
+  }
   const changeEntry = e => {
     onChangeEntry(id, e.currentTarget.value);
   };
 
   const blurEntry = e => {
-    onUpdate({ id, entry: e.currentTarget.value, state, deleted });
+    onUpdate({ id, entry: e.currentTarget.value, date: date, state, deleted });
   };
 
   const entryKeyDown = e => {
@@ -39,21 +47,26 @@ export const Todo = ({
   return (
     <div className={`todo ${state}`}>
       <div className="check">
-        <button onClick={clickState}>
+        <button onClick={clickState} disabled={editStatus} >
           <FontAwesomeIcon icon={state === 'completed' ? faCircleFill : faCircleOutline} />
         </button>
       </div>
       <div className="entry">
-        <input
-          type="text"
-          className={entry.length < 1 ? 'empty' : ''}
-          value={entry}
-          onChange={changeEntry}
-          onKeyDown={entryKeyDown}
-          onBlur={blurEntry}
-          placeholder="Enter Todo…"
-          disabled={state === 'completed'}
-        />
+        {editStatus
+          ?
+          <input
+            type="text"
+            className={entry.length < 1 ? 'empty' : ''}
+            value={entry}
+            onChange={changeEntry}
+            onBlur={blurEntry}
+            onKeyDown={entryKeyDown}
+            placeholder="Enter Todo…"
+            disabled={state === 'completed'}
+          />
+          :
+          <span>{entry}</span>
+        }
       </div>
       <div className="due-date">
         <input
@@ -61,17 +74,18 @@ export const Todo = ({
           className={entry.length < 1 ? 'empty' : ''}
           defaultValue={date}
           onKeyDown={entryKeyDown}
+          onChange={handleDate}
           disabled={state === 'completed'}
         />
+      </div>
+      <div className="edit">
+        <button onClick={clickEdit} disabled={state === 'completed'} >
+          <FontAwesomeIcon icon={faEdit} />
+        </button>
       </div>
       <div className="remove">
         <button onClick={clickRemove}>
           <FontAwesomeIcon icon={faTimes} />
-        </button>
-      </div>
-      <div className="edit">
-        <button onClick={clickEdit}>
-          <FontAwesomeIcon icon={faEdit} />
         </button>
       </div>
     </div>
