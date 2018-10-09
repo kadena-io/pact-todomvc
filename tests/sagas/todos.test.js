@@ -52,7 +52,10 @@ const initialState = {
   editedTodo: null,
 };
 
-const mockTodos = [{ id: 2, entry: 'Alpha' }, { id: 1, entry: 'Zoo' }];
+const mockTodos = [
+  { id: 2, entry: 'Alpha', editStatus: false, date: '10-09-2018' },
+  { id: 1, entry: 'Zoo', editStatus: false, date: '10-09-2018' },
+];
 
 describe('Todos Saga', () => {
   describe('Action Creators', () => {
@@ -71,16 +74,18 @@ describe('Todos Saga', () => {
 
     test('saveNewTodo() should return an action with a newTodo', () => {
       const entry = 'Something';
-      const expected = { type: SAVE_NEW_TODO, entry };
-      const actual = saveNewTodo(entry);
+      const date = '10-09-2018';
+      const expected = { type: SAVE_NEW_TODO, entry, date };
+      const actual = saveNewTodo(entry, date);
       expect(actual).toEqual(expected);
     });
 
     test('changeEntry() should return an action with id and entry', () => {
       const id = 1;
       const entry = 'Something';
-      const expected = { type: CHANGE_TODO_ENTRY, id, entry };
-      const actual = changeEntry(id, entry);
+      const date = '10-09-2018';
+      const expected = { type: CHANGE_TODO_ENTRY, id, entry, date };
+      const actual = changeEntry(id, entry, date);
       expect(actual).toEqual(expected);
     });
 
@@ -164,12 +169,13 @@ describe('Todos Saga', () => {
 
     test('saveNewTodoSaga() should return a newly-created todo', () => {
       const entry = 'A new todo';
+      const date = '10-09-2018';
 
-      testSaga(saveNewTodoSaga, { entry })
+      testSaga(saveNewTodoSaga, { entry, date })
         .next()
         .put({ type: SAVE_NEW_TODO_REQUEST })
         .next()
-        .call(sendPactCommand, `(todos.new-todo ${JSON.stringify(entry)})`)
+        .call(sendPactCommand, `(todos.new-todo ${JSON.stringify(entry)} ${JSON.stringify(date)})`)
         .next(mockTodos[0])
         .put({ type: SAVE_NEW_TODO_SUCCEEDED, newTodo: mockTodos[0] })
         .next()
@@ -179,8 +185,9 @@ describe('Todos Saga', () => {
     test('saveNewTodoSaga() should throw a failure on error', () => {
       const error = new Error('error');
       const entry = 'a todo';
+      const date = '10-09-2018';
 
-      testSaga(saveNewTodoSaga, { entry })
+      testSaga(saveNewTodoSaga, { entry, date })
         .next()
         .put({ type: SAVE_NEW_TODO_REQUEST })
         .next()
@@ -221,13 +228,17 @@ describe('Todos Saga', () => {
     test('updateTodoSaga() should return the updated todo', () => {
       const id = 1;
       const entry = 'A new todo';
-      const todo = { id, entry };
+      const date = '10-09-2018';
+      const todo = { id, entry, date };
 
       testSaga(updateTodoSaga, { todo })
         .next()
         .put({ type: UPDATE_TODO_REQUEST, todo })
         .next()
-        .call(sendPactCommand, `(todos.edit-todo ${todo.id} ${JSON.stringify(todo.entry)})`)
+        .call(
+          sendPactCommand,
+          `(todos.edit-todo ${todo.id} ${JSON.stringify(todo.entry)} ${JSON.stringify(todo.date)})`
+        )
         .next(todo)
         .put({ type: UPDATE_TODO_SUCCEEDED, todo })
         .next()
@@ -238,7 +249,8 @@ describe('Todos Saga', () => {
       const error = new Error('error');
       const id = 1;
       const entry = 'A new todo';
-      const todo = { id, entry };
+      const date = '10-09-2018';
+      const todo = { id, entry, date };
 
       testSaga(updateTodoSaga, { todo })
         .next()

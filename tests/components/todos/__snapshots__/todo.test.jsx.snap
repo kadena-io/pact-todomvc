@@ -38,7 +38,9 @@ exports[`Todo Component should render a todo 1`] = `
   <div
     className="due-date"
   >
-    <span />
+    <span>
+      10-09-2018
+    </span>
   </div>
   <div
     className="edit"

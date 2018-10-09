@@ -53,8 +53,8 @@ describe('Todos Component', () => {
     });
 
     test('should call props.saveNewTodo() on this.saveNewTodo()', () => {
-      component.saveNewTodo(todo.entry);
-      expect(todosProps.saveNewTodo).toHaveBeenCalledWith(todo.entry);
+      component.saveNewTodo(todo.entry, todo.date);
+      expect(todosProps.saveNewTodo).toHaveBeenCalledWith(todo.entry, todo.date);
     });
 
     test('should call props.removeTodo() on this.onRemoveTodo()', () => {
@@ -73,8 +73,8 @@ describe('Todos Component', () => {
     });
 
     test('should call props.changeEntry() on this.onChangeEntry()', () => {
-      component.onChangeEntry(todo.id, todo.entry);
-      expect(todosProps.changeEntry).toHaveBeenCalledWith(todo.id, todo.entry);
+      component.onChangeEntry(todo.id, todo.entry, todo.date);
+      expect(todosProps.changeEntry).toHaveBeenCalledWith(todo.id, todo.entry, todo.date);
     });
   });
 

@@ -258,7 +258,7 @@ export function* updateTodoSaga({ todo }) {
   try {
     yield call(
       sendPactCommand,
-      `(todos.edit-todo ${todo.id} ${JSON.stringify(todo.entry)}  ${JSON.stringify(todo.date)})`
+      `(todos.edit-todo ${todo.id} ${JSON.stringify(todo.entry)} ${JSON.stringify(todo.date)})`
     );
     yield put({ type: UPDATE_TODO_SUCCEEDED, todo });
   } catch (error) {
