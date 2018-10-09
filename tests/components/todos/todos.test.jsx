@@ -25,6 +25,7 @@ const todosProps = {
   toggleState: jest.fn(),
   changeEntry: jest.fn(),
   updateNewTodoField: jest.fn(),
+  changeEditStatus: jest.fn(),
 };
 
 describe('Todos Component', () => {
@@ -75,6 +76,11 @@ describe('Todos Component', () => {
     test('should call props.changeEntry() on this.onChangeEntry()', () => {
       component.onChangeEntry(todo.id, todo.entry, todo.date);
       expect(todosProps.changeEntry).toHaveBeenCalledWith(todo.id, todo.entry, todo.date);
+    });
+
+    test('should call props.changeEditStatus() on this.onClickEdit()', () => {
+      component.onClickEdit(todo.id);
+      expect(todosProps.changeEditStatus).toHaveBeenCalledWith(todo.id);
     });
   });
 

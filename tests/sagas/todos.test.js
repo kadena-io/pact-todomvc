@@ -14,6 +14,7 @@ import {
   REMOVE_TODO_REQUEST,
   REMOVE_TODO_SUCCEEDED,
   REMOVE_TODO_FAILED,
+  CHANGE_EDIT_STATUS,
   UPDATE_TODO,
   UPDATE_TODO_REQUEST,
   UPDATE_TODO_SUCCEEDED,
@@ -32,6 +33,7 @@ import {
   updateTodo,
   toggleState,
   removeTodo,
+  changeEditStatus,
   fetchTodosSaga,
   toggleTodoStateSaga,
   saveNewTodoSaga,
@@ -50,6 +52,7 @@ const initialState = {
   todos: [],
   newTodo: '',
   editedTodo: null,
+  editStatus: false,
 };
 
 const mockTodos = [
@@ -108,6 +111,13 @@ describe('Todos Saga', () => {
       const id = 1;
       const expected = { type: REMOVE_TODO, id };
       const actual = removeTodo(id);
+      expect(actual).toEqual(expected);
+    });
+
+    test('changeEditStatus() should return an action with an id', () => {
+      const id = 1;
+      const expected = { type: CHANGE_EDIT_STATUS, id };
+      const actual = changeEditStatus(id);
       expect(actual).toEqual(expected);
     });
   });
@@ -417,7 +427,7 @@ describe('Todos Saga', () => {
       expect(actual).toEqual(expected);
     });
 
-    test('CHANGE_TODO_ENTRY chage the todo entry', () => {
+    test('CHANGE_TODO_ENTRY change the todo entry', () => {
       const state = { ...initialState, todosIsLoading: true, todos: mockTodos };
       const todo = { ...mockTodos[0], entry: 'new text' };
       const action = { type: CHANGE_TODO_ENTRY, id: mockTodos[0].id, entry: 'new text' };
@@ -428,6 +438,20 @@ describe('Todos Saga', () => {
         ),
       };
 
+      const actual = reducer(state, action);
+      expect(actual).toEqual(expected);
+    });
+
+    test('CHANGE_EDIT_STATUS change the editStatus', () => {
+      const state = { ...initialState, todosIsLoading: true, todos: mockTodos };
+      const todo = { ...mockTodos[0], editStatus: true };
+      const action = { type: CHANGE_EDIT_STATUS, id: mockTodos[0].id };
+      const expected = {
+        ...state,
+        todos: [...state.todos.filter(todo => todo.id !== action.id), todo].sort(
+          (a, b) => a.id - b.id
+        ),
+      };
       const actual = reducer(state, action);
       expect(actual).toEqual(expected);
     });

@@ -23,18 +23,16 @@ export const Todo = ({
     date = e.currentTarget.value;
   };
 
-  const handleEntry = e => {
-    e.preventDefault();
-    entry = e.currentTarget.value;
-  };
-
   const clickRemove = () => onRemove(id);
+
   const clickState = () => {
     onToggleState(id, state === 'completed' ? 'active' : 'completed');
   };
+
   const clickEdit = () => {
     onClickEdit(id);
   };
+
   const changeEntry = e => {
     onChangeEntry(id, e.currentTarget.value, date);
   };

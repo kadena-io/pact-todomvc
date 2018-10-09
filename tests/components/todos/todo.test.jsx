@@ -8,12 +8,13 @@ const todoProps = {
   id: 1,
   entry: 'A Todo',
   state: 'active',
-  date: '10-09-2018',
+  date: '2018-10-09',
   deleted: false,
   onChangeEntry: jest.fn(),
   onUpdate: jest.fn(),
   onRemove: jest.fn(),
   onToggleState: jest.fn(),
+  onClickEdit: jest.fn(),
 };
 
 describe('Todo Component', () => {
@@ -76,27 +77,35 @@ describe('Todo Component', () => {
     const input = component.find('.entry input');
     const newValue = 'Something Else';
     input.simulate('change', { currentTarget: { value: newValue } });
-    expect(todoProps.onChangeEntry).toHaveBeenCalledWith(todoProps.id, newValue, '10-09-2018');
+    expect(todoProps.onChangeEntry).toHaveBeenCalledWith(todoProps.id, newValue, todoProps.date);
   });
 
-  // test('should call onUpdate() when blurring entry field', () => {
-  //   const component = shallow(<Todo {...todoProps} editStatus={true} />);
-  //   const input = component.find('.entry input');
-  //   const newValue = 'Something Else';
-  //   expect(todoProps.onUpdate).toHaveBeenCalledWith({
-  //     id: todoProps.id,
-  //     entry: newValue,
-  //     date: '10-09-2018',
-  //     state: todoProps.state,
-  //     deleted: todoProps.deleted,
-  //   });
-  // });
+  test('should call onclickEdit() when edit button is clicked', () => {
+    const component = shallow(<Todo {...todoProps} editStatus={true} />);
+    const editButton = component.find('.edit button');
+    editButton.simulate('click');
+    expect(todoProps.onClickEdit).toHaveBeenCalledWith(todoProps.id);
+  });
+
+  test('should call onUpdate() when blurring entry field w/ handled date', () => {
+    const component = shallow(<Todo {...todoProps} editStatus={true} />);
+    const dateInput = component.find('.due-date input');
+    const newValue = '2000-01-01';
+    dateInput.simulate('change', { preventDefault() {}, currentTarget: { value: newValue } });
+    dateInput.simulate('blur');
+    expect(todoProps.onUpdate).toHaveBeenCalledWith({
+      id: todoProps.id,
+      entry: todoProps.entry,
+      date: newValue,
+      state: todoProps.state,
+      deleted: todoProps.deleted,
+    });
+  });
 
   test('should only call blur() on text field if keyDown keyCode is 13', () => {
     const component = shallow(<Todo {...todoProps} editStatus={true} />);
     const input = component.find('.entry input');
     const newValue = 'Something Else';
-
     const currentTarget = { blur: jest.fn() };
 
     input.simulate('keyDown', { keyCode: 1, currentTarget });
