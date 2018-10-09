@@ -77,7 +77,7 @@ export class TodosComponent extends React.PureComponent {
                 onChangeEntry={this.onChangeEntry}
                 onUpdate={this.onUpdateTodo}
                 onToggleState={this.onToggleState}
-                onClickEdit = {this.onClickEdit}
+                onClickEdit={this.onClickEdit}
               />
             ))}
           </ul>
@@ -130,9 +130,9 @@ const mapDispatchToProps = dispatch => {
     updateNewTodoField: (entry, date) => {
       dispatch(updateNewTodoField(entry, date));
     },
-    changeEditStatus: (id) => {
-      dispatch(changeEditStatus(id))
-    }
+    changeEditStatus: id => {
+      dispatch(changeEditStatus(id));
+    },
   };
 };
 

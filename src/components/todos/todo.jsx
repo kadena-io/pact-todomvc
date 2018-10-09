@@ -34,10 +34,9 @@ export const Todo = ({
   };
   const clickEdit = () => {
     onClickEdit(id);
-  }
+  };
   const changeEntry = e => {
     onChangeEntry(id, e.currentTarget.value, date);
-
   };
 
   const blurEntry = e => {
@@ -53,13 +52,12 @@ export const Todo = ({
   return (
     <div className={`todo ${state}`}>
       <div className="check">
-        <button onClick={clickState} disabled={editStatus} >
+        <button onClick={clickState} disabled={editStatus}>
           <FontAwesomeIcon icon={state === 'completed' ? faCircleFill : faCircleOutline} />
         </button>
       </div>
       <div className="entry">
-        {editStatus
-          ?
+        {editStatus ? (
           <input
             type="text"
             className={entry.length < 1 ? 'empty' : ''}
@@ -70,13 +68,12 @@ export const Todo = ({
             placeholder="Enter Todo…"
             disabled={state === 'completed'}
           />
-          :
+        ) : (
           <span>{entry}</span>
-        }
+        )}
       </div>
       <div className="due-date">
-        {editStatus
-          ?
+        {editStatus ? (
           <input
             type="date"
             className={entry.length < 1 ? 'empty' : ''}
@@ -84,15 +81,15 @@ export const Todo = ({
             onBlur={blurEntry}
             onKeyDown={entryKeyDown}
             onChange={handleDate}
-            min={new Date().toISOString().slice(0,10)}
+            min={new Date().toISOString().slice(0, 10)}
             disabled={state === 'completed'}
           />
-          :
+        ) : (
           <span>{date}</span>
-        }
+        )}
       </div>
       <div className="edit">
-        <button onClick={clickEdit} disabled={state === 'completed'} >
+        <button onClick={clickEdit} disabled={state === 'completed'}>
           <FontAwesomeIcon icon={faEdit} />
         </button>
       </div>

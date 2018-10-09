@@ -7,11 +7,33 @@ exports[`New Todo Component should render a new todo 1`] = `
   <div
     className="entry"
   >
+    <label>
+      New Todo
+    </label>
     <input
       className="empty"
+      id="new-todo"
+      name="entry"
+      onChange={[Function]}
       onKeyDown={[Function]}
       placeholder="New Todo…"
       type="text"
+    />
+  </div>
+  <div
+    className="date"
+  >
+    <label>
+      Due Date
+    </label>
+    <input
+      id="due-date"
+      min="2018-10-09"
+      name="due-date"
+      onChange={[Function]}
+      onKeyDown={[Function]}
+      placeholder="Enter Due Date..."
+      type="date"
     />
   </div>
 </div>

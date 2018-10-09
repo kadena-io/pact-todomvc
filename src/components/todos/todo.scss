@@ -58,7 +58,8 @@ $correct: #09c;
 
   &.new {
     display: flex;
-    input, label {
+    input,
+    label {
       display: block;
       text-align: center;
     }

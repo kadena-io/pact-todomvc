@@ -50,9 +50,9 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         todosError: null,
-        todos: action.todos.sort((a, b) => a.id - b.id).map(todo=>{
-          return {...todo, editStatus: false}
-        }),
+        todos: action.todos
+          .sort((a, b) => a.id - b.id)
+          .map(todo => ({ ...todo, editStatus: false })),
         todosIsLoading: false,
       };
 
@@ -109,9 +109,10 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         todosError: null,
-        todos: [...state.todos.filter(todo => todo.id !== action.todo.id), {...action.todo, editStatus: false}].sort(
-          (a, b) => a.id - b.id
-        ),
+        todos: [
+          ...state.todos.filter(todo => todo.id !== action.todo.id),
+          { ...action.todo, editStatus: false },
+        ].sort((a, b) => a.id - b.id),
         todosIsLoading: false,
       };
 
@@ -185,7 +186,12 @@ export function saveNewTodo(entry, date) {
 }
 
 export function changeEntry(id, entry, date) {
-  return { type: CHANGE_TODO_ENTRY, id, entry, date };
+  return {
+    type: CHANGE_TODO_ENTRY,
+    id,
+    entry,
+    date,
+  };
 }
 
 export function updateTodo(todo) {
@@ -201,7 +207,7 @@ export function removeTodo(id) {
 }
 
 export function changeEditStatus(id) {
-  return { type: CHANGE_EDIT_STATUS, id }
+  return { type: CHANGE_EDIT_STATUS, id };
 }
 
 export function* fetchTodosSaga() {
@@ -227,7 +233,10 @@ export function* toggleTodoStateSaga({ id, state }) {
 export function* saveNewTodoSaga({ entry, date }) {
   yield put({ type: SAVE_NEW_TODO_REQUEST });
   try {
-    const newTodo = yield call(sendPactCommand, `(todos.new-todo ${JSON.stringify(entry)} ${JSON.stringify(date)})`);
+    const newTodo = yield call(
+      sendPactCommand,
+      `(todos.new-todo ${JSON.stringify(entry)} ${JSON.stringify(date)})`
+    );
     yield put({ type: SAVE_NEW_TODO_SUCCEEDED, newTodo });
   } catch (error) {
     yield put({ type: SAVE_NEW_TODO_FAILED, error });
@@ -247,7 +256,10 @@ export function* removeTodoSaga({ id }) {
 export function* updateTodoSaga({ todo }) {
   yield put({ type: UPDATE_TODO_REQUEST, todo });
   try {
-    yield call(sendPactCommand, `(todos.edit-todo ${todo.id} ${JSON.stringify(todo.entry)}  ${JSON.stringify(todo.date)})`);
+    yield call(
+      sendPactCommand,
+      `(todos.edit-todo ${todo.id} ${JSON.stringify(todo.entry)}  ${JSON.stringify(todo.date)})`
+    );
     yield put({ type: UPDATE_TODO_SUCCEEDED, todo });
   } catch (error) {
     yield put({ type: UPDATE_TODO_FAILED, error });
