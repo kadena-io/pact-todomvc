@@ -15,7 +15,7 @@
     "prettier": "prettier --write \"./**/*\"",
     "lint": "./node_modules/.bin/eslint src/**/* test/**/*.test.js",
     "test": "jest --coverage",
-    "test:snapshots": "jest --updateSnapshot"
+    "test:snapshots": "jest --coverage --updateSnapshot"
   },
   "license": "MIT",
   "dependencies": {
