@@ -18,6 +18,8 @@
 
 `npm test`: Run Jest
 
+`npm test:snapshots`: Update Jest Snapshots
+
 `npm run lint`: Run ESLint
 
 `npm run prettier`: Run Prettier
