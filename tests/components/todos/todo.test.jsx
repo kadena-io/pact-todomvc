@@ -11,6 +11,7 @@ const todoProps = {
   date: '2018-10-09',
   deleted: false,
   onChangeEntry: jest.fn(),
+  onChangeDate: jest.fn(),
   onUpdate: jest.fn(),
   onRemove: jest.fn(),
   onToggleState: jest.fn(),
@@ -77,7 +78,15 @@ describe('Todo Component', () => {
     const input = component.find('.entry input');
     const newValue = 'Something Else';
     input.simulate('change', { currentTarget: { value: newValue } });
-    expect(todoProps.onChangeEntry).toHaveBeenCalledWith(todoProps.id, newValue, todoProps.date);
+    expect(todoProps.onChangeEntry).toHaveBeenCalledWith(todoProps.id, newValue);
+  });
+
+  test('should call changeDate() when changing entry field', () => {
+    const component = shallow(<Todo {...todoProps} editStatus={true} />);
+    const input = component.find('.due-date input');
+    const newValue = '2017-10-01';
+    input.simulate('change', { currentTarget: { value: newValue } });
+    expect(todoProps.onChangeDate).toHaveBeenCalledWith(todoProps.id, newValue);
   });
 
   test('should call onclickEdit() when edit button is clicked', () => {
@@ -87,16 +96,25 @@ describe('Todo Component', () => {
     expect(todoProps.onClickEdit).toHaveBeenCalledWith(todoProps.id);
   });
 
-  test('should call onUpdate() when blurring entry field w/ handled date', () => {
+  test('should call onUpdate() when blurring date field', () => {
     const component = shallow(<Todo {...todoProps} editStatus={true} />);
-    const dateInput = component.find('.due-date input');
-    const newValue = '2000-01-01';
-    dateInput.simulate('change', { preventDefault() {}, currentTarget: { value: newValue } });
-    dateInput.simulate('blur');
+    component.find('.due-date input').simulate('blur');
     expect(todoProps.onUpdate).toHaveBeenCalledWith({
       id: todoProps.id,
       entry: todoProps.entry,
-      date: newValue,
+      date: todoProps.date,
+      state: todoProps.state,
+      deleted: todoProps.deleted,
+    });
+  });
+
+  test('should call onUpdate() when blurring entry field', () => {
+    const component = shallow(<Todo {...todoProps} editStatus={true} />);
+    component.find('.entry input').simulate('blur');
+    expect(todoProps.onUpdate).toHaveBeenCalledWith({
+      id: todoProps.id,
+      entry: todoProps.entry,
+      date: todoProps.date,
       state: todoProps.state,
       deleted: todoProps.deleted,
     });

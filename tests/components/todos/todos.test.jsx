@@ -17,6 +17,8 @@ const todosProps = {
   todosError: null,
   todos: [todo],
   newTodo: '',
+  newEntry: '',
+  newDate: '',
   editedTodo: null,
   fetchTodos: jest.fn(),
   saveNewTodo: jest.fn(),
@@ -24,6 +26,9 @@ const todosProps = {
   updateTodo: jest.fn(),
   toggleState: jest.fn(),
   changeEntry: jest.fn(),
+  changeDate: jest.fn(),
+  changeNewDate: jest.fn(),
+  changeNewEntry: jest.fn(),
   updateNewTodoField: jest.fn(),
   changeEditStatus: jest.fn(),
 };
@@ -74,8 +79,23 @@ describe('Todos Component', () => {
     });
 
     test('should call props.changeEntry() on this.onChangeEntry()', () => {
-      component.onChangeEntry(todo.id, todo.entry, todo.date);
-      expect(todosProps.changeEntry).toHaveBeenCalledWith(todo.id, todo.entry, todo.date);
+      component.onChangeEntry(todo.id, todo.entry);
+      expect(todosProps.changeEntry).toHaveBeenCalledWith(todo.id, todo.entry);
+    });
+
+    test('should call props.changeDate() on this.onChangeDate()', () => {
+      component.onChangeDate(todo.id, todo.date);
+      expect(todosProps.changeDate).toHaveBeenCalledWith(todo.id, todo.date);
+    });
+
+    test('should call props.changeNewEntry() on this.onChangeDate()', () => {
+      component.onChangeNewEntry(todosProps.newEntry);
+      expect(todosProps.changeNewEntry).toHaveBeenCalledWith(todosProps.newEntry);
+    });
+
+    test('should call props.changeNewDate() on this.onChangeNewDate()', () => {
+      component.onChangeNewDate(todosProps.newDate);
+      expect(todosProps.changeNewDate).toHaveBeenCalledWith(todosProps.newDate);
     });
 
     test('should call props.changeEditStatus() on this.onClickEdit()', () => {

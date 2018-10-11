@@ -1,24 +1,18 @@
 import * as React from 'react';
 import './todo.scss';
 
-export const NewTodo = ({ saveNewTodo }) => {
-  let entry = '';
-  let date;
-
-  const handleDate = e => {
-    e.preventDefault();
-    date = e.currentTarget.value;
+export const NewTodo = ({ newEntry, newDate, saveNewTodo, onChangeNewEntry, onChangeNewDate }) => {
+  const changeNewEntry = e => {
+    onChangeNewEntry(e.currentTarget.value);
   };
 
-  const handleEntry = e => {
-    e.preventDefault();
-    entry = e.currentTarget.value;
+  const changeNewDate = e => {
+    onChangeNewDate(e.currentTarget.value);
   };
 
   const entryKeyDown = e => {
     if (e.keyCode === 13) {
-      date = date || new Date().toISOString().slice(0, 10);
-      saveNewTodo(entry, date);
+      saveNewTodo(newEntry, newDate);
       e.currentTarget.value = '';
     }
   };
@@ -32,7 +26,7 @@ export const NewTodo = ({ saveNewTodo }) => {
           type="text"
           name="entry"
           className="empty"
-          onChange={handleEntry}
+          onChange={changeNewEntry}
           onKeyDown={entryKeyDown}
           placeholder="New Todo…"
         />
@@ -43,7 +37,7 @@ export const NewTodo = ({ saveNewTodo }) => {
           id="due-date"
           type="date"
           name="due-date"
-          onChange={handleDate}
+          onChange={changeNewDate}
           onKeyDown={entryKeyDown}
           placeholder="Enter Due Date..."
           min={new Date().toISOString().slice(0, 10)}

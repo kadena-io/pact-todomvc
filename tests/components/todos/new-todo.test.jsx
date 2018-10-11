@@ -4,7 +4,13 @@ import { shallow } from 'enzyme';
 
 import { NewTodo } from '../../../src/components/todos/new-todo';
 
-const newTodoProps = { saveNewTodo: jest.fn() };
+const newTodoProps = {
+  onChangeNewEntry: jest.fn(),
+  onChangeNewDate: jest.fn(),
+  saveNewTodo: jest.fn(),
+  newDate: new Date().toISOString().slice(0, 10),
+  newEntry: '',
+};
 
 describe('New Todo Component', () => {
   afterEach(() => {
@@ -31,34 +37,17 @@ describe('New Todo Component', () => {
     expect(input.value).toEqual('');
   });
 
-  test('should handle entry and date on change', () => {
+  test('should call onChangeNewEntry on change', () => {
     const component = shallow(<NewTodo {...newTodoProps} />);
-    const entryInput = component.find('.entry input');
-    const dateInput = component.find('.date input');
-    entryInput.simulate('change', {
-      preventDefault() {},
-      currentTarget: {
-        value: 'Something',
-      },
-    });
-    dateInput.simulate('change', { preventDefault() {}, currentTarget: { value: '2019-10-20' } });
-    entryInput.simulate('change', { preventDefault() {}, currentTarget: { value: 'Something' } });
-    entryInput.simulate('keyDown', { keyCode: 13, currentTarget: entryInput });
-    expect(newTodoProps.saveNewTodo).toHaveBeenCalledWith('Something', '2019-10-20');
+    const input = component.find('.entry input');
+    input.simulate('change', { currentTarget: { value: 'Something' } });
+    expect(newTodoProps.onChangeNewEntry).toHaveBeenCalledWith('Something');
   });
 
-  test('should assign current date as due date if due date is not selected', () => {
+  test('should call onChangeNewDate on change', () => {
     const component = shallow(<NewTodo {...newTodoProps} />);
-    const entryInput = component.find('.entry input');
-
-    entryInput.simulate('change', {
-      preventDefault() {},
-      currentTarget: { value: 'Something Else' },
-    });
-    entryInput.simulate('keyDown', { keyCode: 13, currentTarget: entryInput });
-    expect(newTodoProps.saveNewTodo).toHaveBeenCalledWith(
-      'Something Else',
-      new Date().toISOString().slice(0, 10)
-    );
+    const input = component.find('.date input');
+    input.simulate('change', { currentTarget: { value: '2018-10-10' } });
+    expect(newTodoProps.onChangeNewDate).toHaveBeenCalledWith('2018-10-10');
   });
 });

@@ -37,7 +37,7 @@ exports[`Todos Component Pass-thru Functions should render a todos list 1`] = `
         </label>
         <input
           id="due-date"
-          min="2018-10-09"
+          min="2018-10-11"
           name="due-date"
           onChange={[Function]}
           onKeyDown={[Function]}

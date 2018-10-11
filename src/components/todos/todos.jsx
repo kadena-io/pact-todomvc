@@ -6,6 +6,9 @@ import {
   saveNewTodo,
   removeTodo,
   changeEntry,
+  changeDate,
+  changeNewEntry,
+  changeNewDate,
   updateTodo,
   toggleState,
   updateNewTodoField,
@@ -23,6 +26,9 @@ export class TodosComponent extends React.PureComponent {
     this.onUpdateTodo = this.onUpdateTodo.bind(this);
     this.onToggleState = this.onToggleState.bind(this);
     this.onChangeEntry = this.onChangeEntry.bind(this);
+    this.onChangeDate = this.onChangeDate.bind(this);
+    this.onChangeNewEntry = this.onChangeNewEntry.bind(this);
+    this.onChangeNewDate = this.onChangeNewDate.bind(this);
     this.saveNewTodo = this.saveNewTodo.bind(this);
     this.onClickEdit = this.onClickEdit.bind(this);
   }
@@ -47,8 +53,20 @@ export class TodosComponent extends React.PureComponent {
     this.props.toggleState(id, state);
   }
 
-  onChangeEntry(id, entry, date) {
-    this.props.changeEntry(id, entry, date);
+  onChangeEntry(id, entry) {
+    this.props.changeEntry(id, entry);
+  }
+
+  onChangeDate(id, date) {
+    this.props.changeDate(id, date);
+  }
+
+  onChangeNewEntry(newEntry) {
+    this.props.changeNewEntry(newEntry);
+  }
+
+  onChangeNewDate(newDate) {
+    this.props.changeNewDate(newDate);
   }
 
   saveNewTodo(entry, date) {
@@ -60,14 +78,20 @@ export class TodosComponent extends React.PureComponent {
   }
 
   render() {
-    const { todos, todosError, editStatus } = this.props;
+    const { todos, todosError, editStatus, newEntry, newDate } = this.props;
     let dom;
     if (todosError !== null) {
       dom = <div className="error">Error loading todos</div>;
     } else {
       dom = (
         <div className="todos-list">
-          <NewTodo saveNewTodo={this.saveNewTodo} />
+          <NewTodo
+            newEntry={newEntry}
+            newDate={newDate}
+            saveNewTodo={this.saveNewTodo}
+            onChangeNewEntry={this.onChangeNewEntry}
+            onChangeNewDate={this.onChangeNewDate}
+          />
           <ul>
             {todos.map((todo, i) => (
               <Todo
@@ -75,6 +99,7 @@ export class TodosComponent extends React.PureComponent {
                 {...todo}
                 onRemove={this.onRemoveTodo}
                 onChangeEntry={this.onChangeEntry}
+                onChangeDate={this.onChangeDate}
                 onUpdate={this.onUpdateTodo}
                 onToggleState={this.onToggleState}
                 onClickEdit={this.onClickEdit}
@@ -126,6 +151,15 @@ const mapDispatchToProps = dispatch => {
     },
     changeEntry: (id, entry, date) => {
       dispatch(changeEntry(id, entry, date));
+    },
+    changeDate: (id, date) => {
+      dispatch(changeDate(id, date));
+    },
+    changeNewEntry: newEntry => {
+      dispatch(changeNewEntry(newEntry));
+    },
+    changeNewDate: newDate => {
+      dispatch(changeNewDate(newDate));
     },
     updateNewTodoField: (entry, date) => {
       dispatch(updateNewTodoField(entry, date));

@@ -29,12 +29,18 @@ export const TOGGLE_TODO_STATE_FAILED = 'pact-todomvc/todos/TOGGLE_TODO_STATE_FA
 
 export const CHANGE_EDIT_STATUS = 'pact-todomvc/todos/CHANGE_EDIT_STATUS';
 export const CHANGE_TODO_ENTRY = 'pact-todomvc/todos/CHANGE_TODO_ENTRY';
+export const CHANGE_TODO_DATE = 'pact-todomvc/todos/CHANGE_TODO_DATE';
+
+export const CHANGE_NEW_TODO_ENTRY = 'pact-todomvc/todos/CHANGE_NEW_TODO_ENTRY';
+export const CHANGE_NEW_TODO_DATE = 'pact-todomvc/todos/CHANGE_NEW_TODO_DATE';
 export const UPDATE_NEW_TODO_FIELD = 'pact-todomvc/todos/UPDATE_NEW_TODO_FIELD';
 
 const initialState = {
   todosIsLoading: false,
   todosError: null,
   todos: [],
+  newEntry: '',
+  newDate: new Date().toISOString().slice(0, 10),
   newTodo: '',
   editStatus: false,
   editedTodo: null,
@@ -155,6 +161,16 @@ export default function reducer(state = initialState, action = {}) {
         ),
       };
 
+    case CHANGE_TODO_DATE:
+      workingTodo = state.todos.find(todo => todo.id === action.id);
+      workingTodo.date = action.date;
+      return {
+        ...state,
+        todos: [...state.todos.filter(todo => todo.id !== action.id), workingTodo].sort(
+          (a, b) => a.id - b.id
+        ),
+      };
+
     case CHANGE_EDIT_STATUS:
       workingTodo = state.todos.find(todo => todo.id === action.id);
       workingTodo.editStatus = !workingTodo.editStatus;
@@ -164,6 +180,12 @@ export default function reducer(state = initialState, action = {}) {
           (a, b) => a.id - b.id
         ),
       };
+
+    case CHANGE_NEW_TODO_DATE:
+      return { ...state, newDate: action.newDate };
+
+    case CHANGE_NEW_TODO_ENTRY:
+      return { ...state, newEntry: action.newEntry };
 
     case UPDATE_NEW_TODO_FIELD:
       return { ...state, newTodo: action.newTodo };
@@ -185,12 +207,33 @@ export function saveNewTodo(entry, date) {
   return { type: SAVE_NEW_TODO, entry, date };
 }
 
-export function changeEntry(id, entry, date) {
+export function changeEntry(id, entry) {
   return {
     type: CHANGE_TODO_ENTRY,
     id,
     entry,
+  };
+}
+
+export function changeDate(id, date) {
+  return {
+    type: CHANGE_TODO_DATE,
+    id,
     date,
+  };
+}
+
+export function changeNewEntry(newEntry) {
+  return {
+    type: CHANGE_NEW_TODO_ENTRY,
+    newEntry,
+  };
+}
+
+export function changeNewDate(newDate) {
+  return {
+    type: CHANGE_NEW_TODO_DATE,
+    newDate,
   };
 }
 

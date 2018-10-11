@@ -13,16 +13,12 @@ export const Todo = ({
   deleted,
   editStatus,
   onChangeEntry,
+  onChangeDate,
   onUpdate,
   onRemove,
   onToggleState,
   onClickEdit,
 }) => {
-  const handleDate = e => {
-    e.preventDefault();
-    date = e.currentTarget.value;
-  };
-
   const clickRemove = () => onRemove(id);
 
   const clickState = () => {
@@ -34,10 +30,14 @@ export const Todo = ({
   };
 
   const changeEntry = e => {
-    onChangeEntry(id, e.currentTarget.value, date);
+    onChangeEntry(id, e.currentTarget.value);
   };
 
-  const blurEntry = e => {
+  const changeDate = e => {
+    onChangeDate(id, e.currentTarget.value);
+  };
+
+  const blurEntry = () => {
     onUpdate({ id, entry, date, state, deleted });
   };
 
@@ -78,7 +78,7 @@ export const Todo = ({
             defaultValue={date}
             onBlur={blurEntry}
             onKeyDown={entryKeyDown}
-            onChange={handleDate}
+            onChange={changeDate}
             min={new Date().toISOString().slice(0, 10)}
             disabled={state === 'completed'}
           />
