@@ -149,8 +149,8 @@ const mapDispatchToProps = dispatch => {
     toggleState: (id, state) => {
       dispatch(toggleState(id, state));
     },
-    changeEntry: (id, entry, date) => {
-      dispatch(changeEntry(id, entry, date));
+    changeEntry: (id, entry) => {
+      dispatch(changeEntry(id, entry));
     },
     changeDate: (id, date) => {
       dispatch(changeDate(id, date));
