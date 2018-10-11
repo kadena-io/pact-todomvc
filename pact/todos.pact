@@ -20,6 +20,7 @@
      deleted:bool
      state:string
      entry:string
+     date:string
      )
 
   (deftable todo-table:{todo})
@@ -45,8 +46,8 @@
   ;; API functions
   ;;
 
-  (defun new-todo (entry)
-    "Create new todo with ENTRY."
+  (defun new-todo (entry date)
+    "Create new todo with ENTRY and DATE."
     (with-read uuid-tracker NEXT-UUID
       { "uuid" := id }
       (update uuid-tracker NEXT-UUID
@@ -55,10 +56,11 @@
         { "id": id,
           "deleted": false,
           "state": ACTIVE,
-          "entry": entry
+          "entry": entry,
+          "date": date
         })
       ;; return json of stored values
-      {"id": id, "state":ACTIVE, "entry":entry}
+      {"id": id, "state":ACTIVE, "entry":entry, "date":date}
     )
   )
 
@@ -75,11 +77,11 @@
     )
   )
 
-  (defun edit-todo (id:integer entry)
+  (defun edit-todo (id:integer entry date)
     "Update todo ENTRY at ID."
     (let ((key (enforce-not-deleted id)))
       (update todo-table key
-        { "entry": entry })
+        { "entry": entry, "date": date})
     )
   )
 

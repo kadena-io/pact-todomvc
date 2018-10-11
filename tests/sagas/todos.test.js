@@ -14,6 +14,7 @@ import {
   REMOVE_TODO_REQUEST,
   REMOVE_TODO_SUCCEEDED,
   REMOVE_TODO_FAILED,
+  CHANGE_EDIT_STATUS,
   UPDATE_TODO,
   UPDATE_TODO_REQUEST,
   UPDATE_TODO_SUCCEEDED,
@@ -23,15 +24,22 @@ import {
   TOGGLE_TODO_STATE_SUCCEEDED,
   TOGGLE_TODO_STATE_FAILED,
   CHANGE_TODO_ENTRY,
+  CHANGE_TODO_DATE,
+  CHANGE_NEW_TODO_ENTRY,
+  CHANGE_NEW_TODO_DATE,
   UPDATE_NEW_TODO_FIELD,
   RESET_NEW_TODO_FIELD,
   updateNewTodoField,
   fetchTodos,
   saveNewTodo,
   changeEntry,
+  changeDate,
+  changeNewEntry,
+  changeNewDate,
   updateTodo,
   toggleState,
   removeTodo,
+  changeEditStatus,
   fetchTodosSaga,
   toggleTodoStateSaga,
   saveNewTodoSaga,
@@ -49,10 +57,16 @@ const initialState = {
   todosError: null,
   todos: [],
   newTodo: '',
+  newEntry: '',
+  newDate: new Date().toISOString().slice(0, 10),
   editedTodo: null,
+  editStatus: false,
 };
 
-const mockTodos = [{ id: 2, entry: 'Alpha' }, { id: 1, entry: 'Zoo' }];
+const mockTodos = [
+  { id: 2, entry: 'Alpha', editStatus: false, date: '10-09-2018' },
+  { id: 1, entry: 'Zoo', editStatus: false, date: '10-09-2018' },
+];
 
 describe('Todos Saga', () => {
   describe('Action Creators', () => {
@@ -71,8 +85,9 @@ describe('Todos Saga', () => {
 
     test('saveNewTodo() should return an action with a newTodo', () => {
       const entry = 'Something';
-      const expected = { type: SAVE_NEW_TODO, entry };
-      const actual = saveNewTodo(entry);
+      const date = '10-09-2018';
+      const expected = { type: SAVE_NEW_TODO, entry, date };
+      const actual = saveNewTodo(entry, date);
       expect(actual).toEqual(expected);
     });
 
@@ -81,6 +96,28 @@ describe('Todos Saga', () => {
       const entry = 'Something';
       const expected = { type: CHANGE_TODO_ENTRY, id, entry };
       const actual = changeEntry(id, entry);
+      expect(actual).toEqual(expected);
+    });
+
+    test('changeDate() should return an action with id and date', () => {
+      const id = 1;
+      const date = '1999-11-11';
+      const expected = { type: CHANGE_TODO_DATE, id, date };
+      const actual = changeDate(id, date);
+      expect(actual).toEqual(expected);
+    });
+
+    test('changeNewEntry() should return an action with new entry', () => {
+      const newEntry = 'Something';
+      const expected = { type: CHANGE_NEW_TODO_ENTRY, newEntry };
+      const actual = changeNewEntry(newEntry);
+      expect(actual).toEqual(expected);
+    });
+
+    test('changeNewDate() should return an action with new date', () => {
+      const newDate = '1999-11-11';
+      const expected = { type: CHANGE_NEW_TODO_DATE, newDate };
+      const actual = changeNewDate(newDate);
       expect(actual).toEqual(expected);
     });
 
@@ -103,6 +140,13 @@ describe('Todos Saga', () => {
       const id = 1;
       const expected = { type: REMOVE_TODO, id };
       const actual = removeTodo(id);
+      expect(actual).toEqual(expected);
+    });
+
+    test('changeEditStatus() should return an action with an id', () => {
+      const id = 1;
+      const expected = { type: CHANGE_EDIT_STATUS, id };
+      const actual = changeEditStatus(id);
       expect(actual).toEqual(expected);
     });
   });
@@ -164,12 +208,13 @@ describe('Todos Saga', () => {
 
     test('saveNewTodoSaga() should return a newly-created todo', () => {
       const entry = 'A new todo';
+      const date = '10-09-2018';
 
-      testSaga(saveNewTodoSaga, { entry })
+      testSaga(saveNewTodoSaga, { entry, date })
         .next()
         .put({ type: SAVE_NEW_TODO_REQUEST })
         .next()
-        .call(sendPactCommand, `(todos.new-todo ${JSON.stringify(entry)})`)
+        .call(sendPactCommand, `(todos.new-todo ${JSON.stringify(entry)} ${JSON.stringify(date)})`)
         .next(mockTodos[0])
         .put({ type: SAVE_NEW_TODO_SUCCEEDED, newTodo: mockTodos[0] })
         .next()
@@ -179,8 +224,9 @@ describe('Todos Saga', () => {
     test('saveNewTodoSaga() should throw a failure on error', () => {
       const error = new Error('error');
       const entry = 'a todo';
+      const date = '10-09-2018';
 
-      testSaga(saveNewTodoSaga, { entry })
+      testSaga(saveNewTodoSaga, { entry, date })
         .next()
         .put({ type: SAVE_NEW_TODO_REQUEST })
         .next()
@@ -221,13 +267,17 @@ describe('Todos Saga', () => {
     test('updateTodoSaga() should return the updated todo', () => {
       const id = 1;
       const entry = 'A new todo';
-      const todo = { id, entry };
+      const date = '10-09-2018';
+      const todo = { id, entry, date };
 
       testSaga(updateTodoSaga, { todo })
         .next()
         .put({ type: UPDATE_TODO_REQUEST, todo })
         .next()
-        .call(sendPactCommand, `(todos.edit-todo ${todo.id} ${JSON.stringify(todo.entry)})`)
+        .call(
+          sendPactCommand,
+          `(todos.edit-todo ${todo.id} ${JSON.stringify(todo.entry)} ${JSON.stringify(todo.date)})`
+        )
         .next(todo)
         .put({ type: UPDATE_TODO_SUCCEEDED, todo })
         .next()
@@ -238,7 +288,8 @@ describe('Todos Saga', () => {
       const error = new Error('error');
       const id = 1;
       const entry = 'A new todo';
-      const todo = { id, entry };
+      const date = '10-09-2018';
+      const todo = { id, entry, date };
 
       testSaga(updateTodoSaga, { todo })
         .next()
@@ -252,6 +303,15 @@ describe('Todos Saga', () => {
   });
 
   describe('Reducer', () => {
+    test('default reducer should return preivious state', () => {
+      const state = { ...initialState };
+      expect(reducer(state)).toEqual(state);
+    });
+
+    test('default reducer should take initialState as default state', () => {
+      expect(reducer()).toEqual(initialState);
+    });
+
     test('should return state on default', () => {
       const expected = { ...initialState };
       const actual = reducer(initialState, { type: 'not a valid action' });
@@ -405,7 +465,7 @@ describe('Todos Saga', () => {
       expect(actual).toEqual(expected);
     });
 
-    test('CHANGE_TODO_ENTRY chage the todo entry', () => {
+    test('CHANGE_TODO_ENTRY change the todo entry', () => {
       const state = { ...initialState, todosIsLoading: true, todos: mockTodos };
       const todo = { ...mockTodos[0], entry: 'new text' };
       const action = { type: CHANGE_TODO_ENTRY, id: mockTodos[0].id, entry: 'new text' };
@@ -416,6 +476,50 @@ describe('Todos Saga', () => {
         ),
       };
 
+      const actual = reducer(state, action);
+      expect(actual).toEqual(expected);
+    });
+
+    test('CHANGE_TODO_DATE change the todo date', () => {
+      const state = { ...initialState, todosIsLoading: true, todos: mockTodos };
+      const todo = { ...mockTodos[0], date: '2015-11-22' };
+      const action = { type: CHANGE_TODO_DATE, id: mockTodos[0].id, date: '2015-11-22' };
+      const expected = {
+        ...state,
+        todos: [...state.todos.filter(todo => todo.id !== action.id), todo].sort(
+          (a, b) => a.id - b.id
+        ),
+      };
+      const actual = reducer(state, action);
+      expect(actual).toEqual(expected);
+    });
+
+    test('CHANGE_NEW_TODO_ENTRY change the newEntry', () => {
+      const newEntry = 'hello';
+      const action = { type: CHANGE_NEW_TODO_ENTRY, newEntry };
+      const expected = { ...initialState, newEntry };
+      const actual = reducer(initialState, action);
+      expect(actual).toEqual(expected);
+    });
+
+    test('CHANGE_NEW_TODO_DATE change the newDate', () => {
+      const newDate = '2011-11-11';
+      const action = { type: CHANGE_NEW_TODO_DATE, newDate };
+      const expected = { ...initialState, newDate };
+      const actual = reducer(initialState, action);
+      expect(actual).toEqual(expected);
+    });
+
+    test('CHANGE_EDIT_STATUS change the editStatus', () => {
+      const state = { ...initialState, todosIsLoading: true, todos: mockTodos };
+      const todo = { ...mockTodos[0], editStatus: true };
+      const action = { type: CHANGE_EDIT_STATUS, id: mockTodos[0].id };
+      const expected = {
+        ...state,
+        todos: [...state.todos.filter(todo => todo.id !== action.id), todo].sort(
+          (a, b) => a.id - b.id
+        ),
+      };
       const actual = reducer(state, action);
       expect(actual).toEqual(expected);
     });

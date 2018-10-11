@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircle as faCircleFill, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCircle as faCircleFill, faTimes, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { faCircle as faCircleOutline } from '@fortawesome/free-regular-svg-icons';
 
 import './todo.scss';
@@ -8,24 +8,37 @@ import './todo.scss';
 export const Todo = ({
   id,
   entry,
+  date,
   state,
   deleted,
+  editStatus,
   onChangeEntry,
+  onChangeDate,
   onUpdate,
   onRemove,
   onToggleState,
+  onClickEdit,
 }) => {
   const clickRemove = () => onRemove(id);
+
   const clickState = () => {
     onToggleState(id, state === 'completed' ? 'active' : 'completed');
+  };
+
+  const clickEdit = () => {
+    onClickEdit(id);
   };
 
   const changeEntry = e => {
     onChangeEntry(id, e.currentTarget.value);
   };
 
-  const blurEntry = e => {
-    onUpdate({ id, entry: e.currentTarget.value, state, deleted });
+  const changeDate = e => {
+    onChangeDate(id, e.currentTarget.value);
+  };
+
+  const blurEntry = () => {
+    onUpdate({ id, entry, date, state, deleted });
   };
 
   const entryKeyDown = e => {
@@ -37,21 +50,46 @@ export const Todo = ({
   return (
     <div className={`todo ${state}`}>
       <div className="check">
-        <button onClick={clickState}>
+        <button onClick={clickState} disabled={editStatus}>
           <FontAwesomeIcon icon={state === 'completed' ? faCircleFill : faCircleOutline} />
         </button>
       </div>
       <div className="entry">
-        <input
-          type="text"
-          className={entry.length < 1 ? 'empty' : ''}
-          value={entry}
-          onChange={changeEntry}
-          onKeyDown={entryKeyDown}
-          onBlur={blurEntry}
-          placeholder="Enter Todo…"
-          disabled={state === 'completed'}
-        />
+        {editStatus ? (
+          <input
+            type="text"
+            className={entry.length < 1 ? 'empty' : ''}
+            value={entry}
+            onChange={changeEntry}
+            onBlur={blurEntry}
+            onKeyDown={entryKeyDown}
+            placeholder="Enter Todo…"
+            disabled={state === 'completed'}
+          />
+        ) : (
+          <span>{entry}</span>
+        )}
+      </div>
+      <div className="due-date">
+        {editStatus ? (
+          <input
+            type="date"
+            className={entry.length < 1 ? 'empty' : ''}
+            defaultValue={date}
+            onBlur={blurEntry}
+            onKeyDown={entryKeyDown}
+            onChange={changeDate}
+            min={new Date().toISOString().slice(0, 10)}
+            disabled={state === 'completed'}
+          />
+        ) : (
+          <span>{date}</span>
+        )}
+      </div>
+      <div className="edit">
+        <button onClick={clickEdit} disabled={state === 'completed'}>
+          <FontAwesomeIcon icon={faEdit} />
+        </button>
       </div>
       <div className="remove">
         <button onClick={clickRemove}>

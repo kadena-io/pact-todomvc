@@ -4,7 +4,13 @@ import { shallow } from 'enzyme';
 
 import { NewTodo } from '../../../src/components/todos/new-todo';
 
-const newTodoProps = { saveNewTodo: jest.fn() };
+const newTodoProps = {
+  onChangeNewEntry: jest.fn(),
+  onChangeNewDate: jest.fn(),
+  saveNewTodo: jest.fn(),
+  newDate: new Date().toISOString().slice(0, 10),
+  newEntry: '',
+};
 
 describe('New Todo Component', () => {
   afterEach(() => {
@@ -29,5 +35,19 @@ describe('New Todo Component', () => {
     input.simulate('keyDown', { keyCode: 13, currentTarget: input });
     expect(newTodoProps.saveNewTodo).toHaveBeenCalled();
     expect(input.value).toEqual('');
+  });
+
+  test('should call onChangeNewEntry on change', () => {
+    const component = shallow(<NewTodo {...newTodoProps} />);
+    const input = component.find('.entry input');
+    input.simulate('change', { currentTarget: { value: 'Something' } });
+    expect(newTodoProps.onChangeNewEntry).toHaveBeenCalledWith('Something');
+  });
+
+  test('should call onChangeNewDate on change', () => {
+    const component = shallow(<NewTodo {...newTodoProps} />);
+    const input = component.find('.date input');
+    input.simulate('change', { currentTarget: { value: '2018-10-10' } });
+    expect(newTodoProps.onChangeNewDate).toHaveBeenCalledWith('2018-10-10');
   });
 });

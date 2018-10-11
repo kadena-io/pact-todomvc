@@ -6,9 +6,13 @@ import {
   saveNewTodo,
   removeTodo,
   changeEntry,
+  changeDate,
+  changeNewEntry,
+  changeNewDate,
   updateTodo,
   toggleState,
   updateNewTodoField,
+  changeEditStatus,
 } from '../../sagas/todos';
 
 import { NewTodo } from './new-todo';
@@ -22,7 +26,11 @@ export class TodosComponent extends React.PureComponent {
     this.onUpdateTodo = this.onUpdateTodo.bind(this);
     this.onToggleState = this.onToggleState.bind(this);
     this.onChangeEntry = this.onChangeEntry.bind(this);
+    this.onChangeDate = this.onChangeDate.bind(this);
+    this.onChangeNewEntry = this.onChangeNewEntry.bind(this);
+    this.onChangeNewDate = this.onChangeNewDate.bind(this);
     this.saveNewTodo = this.saveNewTodo.bind(this);
+    this.onClickEdit = this.onClickEdit.bind(this);
   }
 
   componentDidMount() {
@@ -49,29 +57,55 @@ export class TodosComponent extends React.PureComponent {
     this.props.changeEntry(id, entry);
   }
 
-  saveNewTodo(entry) {
-    this.props.saveNewTodo(entry);
+  onChangeDate(id, date) {
+    this.props.changeDate(id, date);
+  }
+
+  onChangeNewEntry(newEntry) {
+    this.props.changeNewEntry(newEntry);
+  }
+
+  onChangeNewDate(newDate) {
+    this.props.changeNewDate(newDate);
+  }
+
+  saveNewTodo(entry, date) {
+    this.props.saveNewTodo(entry, date);
+  }
+
+  onClickEdit(id) {
+    this.props.changeEditStatus(id);
   }
 
   render() {
-    const { todos, todosError } = this.props;
+    const { todos, todosError, editStatus, newEntry, newDate } = this.props;
     let dom;
     if (todosError !== null) {
       dom = <div className="error">Error loading todos</div>;
     } else {
       dom = (
         <div className="todos-list">
-          <NewTodo saveNewTodo={this.saveNewTodo} />
-          {todos.map((todo, i) => (
-            <Todo
-              key={i}
-              {...todo}
-              onRemove={this.onRemoveTodo}
-              onChangeEntry={this.onChangeEntry}
-              onUpdate={this.onUpdateTodo}
-              onToggleState={this.onToggleState}
-            />
-          ))}
+          <NewTodo
+            newEntry={newEntry}
+            newDate={newDate}
+            saveNewTodo={this.saveNewTodo}
+            onChangeNewEntry={this.onChangeNewEntry}
+            onChangeNewDate={this.onChangeNewDate}
+          />
+          <ul>
+            {todos.map((todo, i) => (
+              <Todo
+                key={i}
+                {...todo}
+                onRemove={this.onRemoveTodo}
+                onChangeEntry={this.onChangeEntry}
+                onChangeDate={this.onChangeDate}
+                onUpdate={this.onUpdateTodo}
+                onToggleState={this.onToggleState}
+                onClickEdit={this.onClickEdit}
+              />
+            ))}
+          </ul>
         </div>
       );
     }
@@ -103,8 +137,8 @@ const mapDispatchToProps = dispatch => {
     fetchTodos: () => {
       dispatch(fetchTodos());
     },
-    saveNewTodo: newTodo => {
-      dispatch(saveNewTodo(newTodo));
+    saveNewTodo: (newTodo, date) => {
+      dispatch(saveNewTodo(newTodo, date));
     },
     removeTodo: id => {
       dispatch(removeTodo(id));
@@ -118,8 +152,20 @@ const mapDispatchToProps = dispatch => {
     changeEntry: (id, entry) => {
       dispatch(changeEntry(id, entry));
     },
-    updateNewTodoField: entry => {
-      dispatch(updateNewTodoField(entry));
+    changeDate: (id, date) => {
+      dispatch(changeDate(id, date));
+    },
+    changeNewEntry: newEntry => {
+      dispatch(changeNewEntry(newEntry));
+    },
+    changeNewDate: newDate => {
+      dispatch(changeNewDate(newDate));
+    },
+    updateNewTodoField: (entry, date) => {
+      dispatch(updateNewTodoField(entry, date));
+    },
+    changeEditStatus: id => {
+      dispatch(changeEditStatus(id));
     },
   };
 };

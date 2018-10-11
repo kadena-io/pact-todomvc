@@ -24,6 +24,11 @@ $correct: #09c;
     color: #fff;
   }
 
+  .edit button:hover {
+    background: #c00;
+    color: #fff;
+  }
+
   .entry {
     flex: 1;
     text-align: left;
@@ -32,6 +37,7 @@ $correct: #09c;
     input {
       color: #000;
       border: 1px solid transparent;
+      border-color: #ccc;
       transition: all 0.1s ease-in-out;
       border-radius: 3px;
       width: 100%;
@@ -51,6 +57,12 @@ $correct: #09c;
   }
 
   &.new {
+    display: flex;
+    input,
+    label {
+      display: block;
+      text-align: center;
+    }
     .entry {
       height: 1.5em;
     }
