@@ -10,19 +10,26 @@
 
 ## Scripts
 
-`npm start:pact`: Start the Pact Server
+`npm run start:pact`: Start the Pact Server
 
-`npm pact:seed`: Seed the blockchain
+`npm run pact:seed`: Seed the blockchain
 
-`npm start:dev`: Start the Webpack Dev Server
+`npm run start:dev`: Start the Webpack Dev Server
 
-`npm test`: Run Jest
+`npm run test`: Run Jest
 
-`npm test:snapshots`: Update Jest Snapshots
+`npm run test:snapshots`: Update Jest Snapshots
 
 `npm run lint`: Run ESLint
 
 `npm run prettier`: Run Prettier
+
+## Starting the Project
+
+1. `npm run start:dev`
+2. `npm run start:pact`
+3. `npm run pact:seed`
+4. `http://localhost:8081`
 
 ## Using the Pact Dev Server
 
