@@ -6,7 +6,12 @@
 
 - Install Pact
 - Install Node >= 8.11.4
-- `mkdir log`
+- Install Webpack
+  - `npm install --save-dev webpack`  
+  - `npm install --save-dev webpack@4.16.2`
+- Install [Pact Lang API](https://www.npmjs.com/package/pact-lang-api)
+  - `npm i pact-lang-api`
+- Navigate into pact-todomvc and create a log folder in the top-level folder `mkdir log`
 
 ## Scripts
 
