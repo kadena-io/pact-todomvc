@@ -34,7 +34,7 @@
 1. `npm run start:dev`
 2. `npm run start:pact`
 3. `npm run pact:seed`
-4. `http://localhost:8081`
+4. `http://localhost:8080`
 
 ## Using the Pact Dev Server
 
