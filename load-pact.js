@@ -1,11 +1,12 @@
 #!/usr/bin/env node
+
 var fs = require('fs');
 var pact = require('pact-lang-api');
 
 var args = {};
 var key = undefined;
 process.argv.slice(2).forEach(function(v, i, a) {
-  if (key) {
+if (key) {
     args[key] = v;
     key = undefined;
   } else {
@@ -44,7 +45,8 @@ function read(fp, cb) {
 }
 function go(code, data) {
   var kp = { publicKey: args.p, secretKey: args.s };
-  var msg = pact.simple.exec.createCommand(kp, args.n, code, JSON.parse(data));
+  var meta = pact.lang.mkMeta("","",0,0)
+  var msg = pact.simple.exec.createCommand(kp, args.n, code, JSON.parse(data), meta);
   console.log(JSON.stringify(msg));
 }
 

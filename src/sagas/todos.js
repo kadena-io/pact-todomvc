@@ -266,7 +266,7 @@ export function* fetchTodosSaga() {
 export function* toggleTodoStateSaga({ id, state }) {
   yield put({ type: TOGGLE_TODO_STATE_REQUEST });
   try {
-    yield call(sendPactCommand, `(todos.toggle-todo-status ${id})`);
+    yield call(sendPactCommand, `(todos.toggle-todo-status ${id.int})`);
     yield put({ type: TOGGLE_TODO_STATE_SUCCEEDED, id, state });
   } catch (error) {
     yield put({ type: TOGGLE_TODO_STATE_FAILED, error });
@@ -289,7 +289,7 @@ export function* saveNewTodoSaga({ entry, date }) {
 export function* removeTodoSaga({ id }) {
   yield put({ type: REMOVE_TODO_REQUEST, id });
   try {
-    yield call(sendPactCommand, `(todos.delete-todo ${id})`);
+    yield call(sendPactCommand, `(todos.delete-todo ${id.int})`);
     yield put({ type: REMOVE_TODO_SUCCEEDED, id });
   } catch (error) {
     yield put({ type: REMOVE_TODO_FAILED, error });
@@ -301,7 +301,7 @@ export function* updateTodoSaga({ todo }) {
   try {
     yield call(
       sendPactCommand,
-      `(todos.edit-todo ${todo.id} ${JSON.stringify(todo.entry)} ${JSON.stringify(todo.date)})`
+      `(todos.edit-todo ${todo.id.int} ${JSON.stringify(todo.entry)} ${JSON.stringify(todo.date)})`
     );
     yield put({ type: UPDATE_TODO_SUCCEEDED, todo });
   } catch (error) {
