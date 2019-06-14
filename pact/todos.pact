@@ -10,125 +10,57 @@
 (module todos 'todo-admin-keyset
   " Smart contract module for TODO-MVC pact app.   \
   \ Tables:                                        \
-  \ todo -- holds todo entries                     \
-  \ uuid -- uuid creation tracking singleton table "
+  \ todo -- holds todo entries"
 
   ;; todo schema and table
   (defschema todo
     "Row type for todos."
-     id:integer
+     title:string
+     completed:bool
      deleted:bool
-     state:string
-     entry:string
-     date:string
      )
 
   (deftable todo-table:{todo})
-
-  ;; uuid schema and singleton table
-  (defschema uuid
-    "create and track uuids for todos"
-    uuid:integer
-    )
-
-  (deftable uuid-tracker:{uuid})
-
-
-  ;; todo state consts
-  (defconst ACTIVE "active")
-  (defconst COMPLETED "completed")
-  (defconst DELETED "deleted")
-
-  ;; key for uuid singleton table
-  (defconst NEXT-UUID "next-uuid")
 
   ;;
   ;; API functions
   ;;
 
-  (defun new-todo (entry date)
+  (defun new-todo (id title)
     "Create new todo with ENTRY and DATE."
-    (with-read uuid-tracker NEXT-UUID
-      { "uuid" := id }
-      (update uuid-tracker NEXT-UUID
-        { "uuid": (+ id 1) })
-      (insert todo-table (id-key id)
-        { "id": id,
-          "deleted": false,
-          "state": ACTIVE,
-          "entry": entry,
-          "date": date
-        })
-      ;; return json of stored values
-      {"id": id, "state":ACTIVE, "entry":entry, "date":date}
-    )
+    (insert todo-table id {
+      "title": title,
+      "completed": false,
+      "deleted": false })
   )
 
-  (defun toggle-todo-status (id:integer)
-    "Toggle ACTIVE/COMPLETED status flag for todo at ID."
-    (let ((key (enforce-not-deleted id)))
-      (with-read todo-table key
-        { "state" := state }
-        (update todo-table key
-          { "state":
-              (if (= state ACTIVE) COMPLETED ACTIVE)
-          })
-      )
-    )
-  )
+  (defun toggle-todo-status (id:string)
+    "Toggle completed status flag for todo at ID."
+    (with-read todo-table id {
+      "completed":= state
+      }
+      (update todo-table id {
+        "completed": (not state) })))
 
-  (defun edit-todo (id:integer entry date)
+  (defun edit-todo (id:string title)
     "Update todo ENTRY at ID."
-    (let ((key (enforce-not-deleted id)))
-      (update todo-table key
-        { "entry": entry, "date": date})
-    )
-  )
+    (update todo-table id {
+      "title": title }))
 
-  (defun delete-todo (id:integer)
-    "Delete todo entry at ID (by setting deleted flag)."
-    (update todo-table (id-key id)
-      { "deleted": true })
-  )
+  (defun delete-todo (id:string)
+    "Delete todo title at ID (by setting deleted flag)."
+    (update todo-table id {
+      "deleted": true }))
 
-  (defun read-todo (id:integer)
-    "Read todo at ID."
-    (read todo-table (id-key id))
-  )
+  (defun read-todo:object (id:string)
+    "Read a single todo"
+    (+ {'id: id} (read todo-table id)))
 
   (defun read-todos:[object{todo}] ()
     "Read all un-deleted todos."
-    (filter (not-deleted)
-      (map (read todo-table) (keys todo-table)))
-  )
-
-
-  ;;
-  ;; Utility functions
-  ;;
-
-  (defun not-deleted (obj:object{todo})
-    "Utility to check deleted flag of todo OBJ."
-    (not (at "deleted" obj)))
-
-  (defun enforce-not-deleted (id:integer)
-    "Enforce row exists at ID and deleted flag is not set. \
-    \ Also returns formatted row key."
-    (let ((row (read todo-table (id-key id))))
-      (enforce (not-deleted row)
-        "todo must not be deleted")
-      (id-key id)))
-
-
-  (defun id-key (id:integer)
-    "Format ID integer value as todo row key."
-    (format "{}" [id])
-  )
-
-
+    (select todo-table ['title 'completed]
+      (where 'deleted (= false))))
 )
 
 (create-table todo-table)
-(create-table uuid-tracker)
-(insert uuid-tracker NEXT-UUID {"uuid": 0})
 ;done

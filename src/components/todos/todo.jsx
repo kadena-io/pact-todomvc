@@ -1,101 +1,86 @@
-import * as React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircle as faCircleFill, faTimes, faEdit } from '@fortawesome/free-solid-svg-icons';
-import { faCircle as faCircleOutline } from '@fortawesome/free-regular-svg-icons';
+import * as React from "react";
 
-import './todo.scss';
+var ESCAPE_KEY = 27;
+var ENTER_KEY = 13;
 
-export const Todo = ({
-  id,
-  entry,
-  date,
-  state,
-  deleted,
-  editStatus,
-  onChangeEntry,
-  onChangeDate,
-  onUpdate,
-  onRemove,
-  onToggleState,
-  onClickEdit,
-}) => {
-  const clickRemove = () => onRemove(id);
+export class TodoItem extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = { editText: this.props.todo.title };
+  }
 
-  const clickState = () => {
-    onToggleState(id, state === 'completed' ? 'active' : 'completed');
-  };
-
-  const clickEdit = () => {
-    onClickEdit(id);
-  };
-
-  const changeEntry = e => {
-    onChangeEntry(id, e.currentTarget.value);
-  };
-
-  const changeDate = e => {
-    onChangeDate(id, e.currentTarget.value);
-  };
-
-  const blurEntry = () => {
-    onUpdate({ id, entry, date, state, deleted });
-  };
-
-  const entryKeyDown = e => {
-    if (e.keyCode === 13) {
-      e.currentTarget.blur();
+  handleSubmit(event) {
+    var val = this.state.editText.trim();
+    if (val) {
+      this.props.onSave(val);
+      this.setState({ editText: val });
+    } else {
+      this.props.onDestroy();
     }
-  };
+  }
 
-  return (
-    <div className={`todo ${state}`}>
-      <div className="check">
-        <button onClick={clickState} disabled={editStatus}>
-          <FontAwesomeIcon icon={state === 'completed' ? faCircleFill : faCircleOutline} />
-        </button>
-      </div>
-      <div className="entry">
-        {editStatus ? (
+  handleEdit() {
+    this.props.onEdit();
+    this.setState({ editText: this.props.todo.title });
+  }
+
+  handleKeyDown(event) {
+    if (event.which === ESCAPE_KEY) {
+      this.setState({ editText: this.props.todo.title });
+      this.props.onCancel(event);
+    } else if (event.which === ENTER_KEY) {
+      this.handleSubmit(event);
+    }
+  }
+
+  handleChange(event) {
+    if (this.props.editing) {
+      this.setState({ editText: event.target.value });
+    }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return (
+      nextProps.todo !== this.props.todo ||
+      nextProps.editing !== this.props.editing ||
+      nextState.editText !== this.state.editText
+    );
+  }
+  componentDidUpdate(prevProps) {
+    if (!prevProps.editing && this.props.editing) {
+      var node = React.findDOMNode(this.refs.editField);
+      node.focus();
+      node.setSelectionRange(node.value.length, node.value.length);
+    }
+  }
+
+  render() {
+    return (
+      <li
+        className={{
+          completed: this.props.todo.completed,
+          editing: this.props.editing
+        }}
+      >
+        <div className="view">
           <input
-            type="text"
-            className={entry.length < 1 ? 'empty' : ''}
-            value={entry}
-            onChange={changeEntry}
-            onBlur={blurEntry}
-            onKeyDown={entryKeyDown}
-            placeholder="Enter Todo…"
-            disabled={state === 'completed'}
+            className="toggle"
+            type="checkbox"
+            checked={this.props.todo.completed}
+            onChange={this.props.onToggle}
           />
-        ) : (
-          <span>{entry}</span>
-        )}
-      </div>
-      <div className="due-date">
-        {editStatus ? (
-          <input
-            type="date"
-            className={entry.length < 1 ? 'empty' : ''}
-            defaultValue={date}
-            onBlur={blurEntry}
-            onKeyDown={entryKeyDown}
-            onChange={changeDate}
-            min={new Date().toISOString().slice(0, 10)}
-            disabled={state === 'completed'}
-          />
-        ) : (
-          <span>{date}</span>
-        )}
-      </div>
-      <div className="edit">
-        <button onClick={clickEdit} disabled={state === 'completed'}>
-          <FontAwesomeIcon icon={faEdit} />
-        </button>
-      </div>
-      <div className="remove">
-        <button onClick={clickRemove}>
-          <FontAwesomeIcon icon={faTimes} />
-        </button>
-      </div>
-    </div>
-  );
-};
+          <label onDoubleClick={this.handleEdit}>{this.props.todo.title}</label>
+          <button className="destroy" onClick={this.props.onDestroy} />
+        </div>
+        <input
+          ref="editField"
+          className="edit"
+          value={this.props.editText}
+          onBlur={this.handleSubmit}
+          onChange={this.handleChange}
+          onKeyDown={this.handleKeyDown}
+        />
+      </li>
+    );
+  }
+}

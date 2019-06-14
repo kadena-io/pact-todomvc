@@ -8,7 +8,6 @@
 
 (typecheck "todos")
 
-(new-todo "get bread" "2018-10-10")
-(read-todo 0)
-(toggle-todo-status 0)
-(read-todo 0)
+(use todos)
+(new-todo "1" "wash")
+(read-todo "1")
