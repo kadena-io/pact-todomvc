@@ -3,7 +3,7 @@ import * as React from "react";
 var ESCAPE_KEY = 27;
 var ENTER_KEY = 13;
 
-export class TodoItem extends React.PureComponent {
+export class TodoItem extends React.Component {
   constructor(props) {
     super(props);
     this.state = { editText: this.props.todo.title };

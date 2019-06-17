@@ -57,9 +57,8 @@
     (+ {'id: id} (read todo-table id)))
 
   (defun read-todos:[object{todo}] ()
-    "Read all un-deleted todos."
-    (select todo-table ['title 'completed]
-      (where 'deleted (= false))))
+    "Read all todos."
+    (map (read-todo) (keys todo-table)))
 )
 
 (create-table todo-table)

@@ -1,4 +1,5 @@
 import * as React from "react";
+
 import { TodoItem } from "./todo.jsx";
 import { TodoFooter } from "./footer.jsx";
 import uuidv4 from "uuid/v4";
@@ -7,6 +8,9 @@ import Pact from "pact-lang-api";
 const ENTER_KEY = 13;
 const KP = Pact.crypto.genKeyPair();
 const API_HOST = "http://localhost:9001";
+const ALL_TODOS = "all";
+const ACTIVE_TODOS = "active";
+const COMPLETED_TODOS = "completed";
 
 export class TodoApp extends React.PureComponent {
   constructor() {
@@ -14,7 +18,7 @@ export class TodoApp extends React.PureComponent {
     this.state = {
       todos: [],
       onChanges: [],
-      nowShowing: "all",
+      nowShowing: ALL_TODOS,
       editing: null,
       newTodo: ""
     };
@@ -24,8 +28,11 @@ export class TodoApp extends React.PureComponent {
     this.destroy = this.destroy.bind(this);
     this.edit = this.edit.bind(this);
     this.cancel = this.cancel.bind(this);
-    this.clearcompleted = this.clearcompleted.bind(this);
+    this.clearCompleted = this.clearCompleted.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.showActive = this.showActive.bind(this);
+    this.showCompleted = this.showCompleted.bind(this);
+    this.showAll =this.showAll.bind(this);
   }
 
   componentDidMount() {
@@ -35,12 +42,16 @@ export class TodoApp extends React.PureComponent {
   getTodos() {
     const cmdObj = {
       pactCode: `(todos.read-todos)`,
-      apiHost: API_HOST,
       keyPairs: KP
     };
-    Pact.fetch.local(cmdObj)
+    return Pact.fetch.local(cmdObj, API_HOST)
       .then(res => res.data)
-      .then(todos => this.setState({ todos }))
+      .then(todos =>{
+        const notDeleted = todos.filter(todo => {
+          return todo.deleted===false
+        })
+        this.setState({ todos: notDeleted });
+      })
       .catch(e => e);
   }
 
@@ -58,42 +69,40 @@ export class TodoApp extends React.PureComponent {
     var val = this.state.newTodo.trim();
 
     if (val) {
-      this.addTodo(val);
+      this.add(val);
       this.setState({ newTodo: "" });
     }
   }
 
-  addTodo(title) {
+  add(title) {
     const uuid = uuidv4();
     const cmdObj = {
-      pactCode: `(todos.new-todo
-                 ${JSON.stringify(uuid)}
-                 ${JSON.stringify(title)})`,
-      apiHost: API_HOST,
+      pactCode: `(todos.new-todo ${JSON.stringify(uuid)} ${JSON.stringify(title)})`,
       keyPairs: KP
     };
 
-    Pact.fetch.send(cmdObj);
+    Pact.fetch.send(cmdObj, API_HOST);
+    this.getTodos();
   }
 
   toggle(todo) {
     const cmdObj = {
       pactCode: `(todos.toggle-todo-status
                  ${JSON.stringify(todo.id)})`,
-      apiHost: API_HOST,
       keyPairs: KP
     };
-    const res = Pact.fetch.send(cmdObj);
+    Pact.fetch.send(cmdObj, API_HOST);
+    this.getTodos();
   }
 
   destroy(todo) {
     const cmdObj = {
       pactCode: `(todos.delete-todo
                  ${JSON.stringify(todo.id)})`,
-      apiHost: API_HOST,
       keyPairs: KP
     };
-    Pact.fetch.send(cmdObj);
+    Pact.fetch.send(cmdObj, API_HOST);
+    this.getTodos();
   }
 
   edit(todo, text) {
@@ -101,21 +110,39 @@ export class TodoApp extends React.PureComponent {
       pactCode: `(todos.edit-todo
                 ${JSON.stringify(todo.id)})
                 ${JSON.stringify(text)})`,
-      apiHost: API_HOST,
       keyPairs: KP
     };
-    const res = Pact.fetch.send(cmdObj);
+    Pact.fetch.send(cmdObj, API_HOST);
     this.setState({ editing: null });
+    this.getTodos();
   }
 
   cancel() {
     this.setState({ editing: null });
   }
 
-  clearcompleted() {
-    this.todos = this.todos.filter(function(todo) {
-      return !todo.completed;
-    });
+  clearCompleted() {
+    const completedTodos = this.state.todos.filter(todo => todo.completed)
+    const cmds = completedTodos.map(todo => {
+      return {
+        pactCode: `(todos.delete-todo
+                   ${JSON.stringify(todo.id)})`,
+        keyPairs: KP
+    }});
+    Pact.fetch.send(cmds, API_HOST)
+    this.getTodos();
+  }
+
+  showActive(){
+    this.setState({nowShowing: ACTIVE_TODOS})
+  }
+
+  showCompleted(){
+    this.setState({nowShowing: COMPLETED_TODOS})
+  }
+
+  showAll(){
+    this.setState({nowShowing: ALL_TODOS})
   }
 
   handleSubmit(e) {
@@ -127,25 +154,24 @@ export class TodoApp extends React.PureComponent {
       });
     } else {
       this.destroy();
+      this.getTodos();
     }
   }
 
   render() {
-    console.log(this.state.todos);
     var footer;
     var main;
     var todos = this.state.todos;
     var shownTodos = todos.filter(function(todo) {
       switch (this.state.nowShowing) {
-        case "active":
+        case ACTIVE_TODOS:
           return !todo.completed;
-        case "completed":
+        case COMPLETED_TODOS:
           return todo.completed;
         default:
           return true;
       }
     }, this);
-
     var todoItems = shownTodos.map(function(todo) {
       return (
         <TodoItem
@@ -173,6 +199,9 @@ export class TodoApp extends React.PureComponent {
           completedCount={completedCount}
           nowShowing={this.state.nowShowing}
           onClearCompleted={this.clearCompleted}
+          showActive={this.showActive}
+          showCompleted = {this.showCompleted}
+          showAll = {this.showAll}
         />
       );
     }

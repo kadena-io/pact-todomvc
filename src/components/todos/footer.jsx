@@ -27,12 +27,16 @@ export class TodoFooter extends React.PureComponent {
         </span>
         <ul className="filters">
           <li>
-            <a href="#/" className={{ selected: nowShowing === "all" }}>
+            <a
+               onClick={this.props.showAll}
+               href="#/"
+               className={{ selected: nowShowing === "all" }}>
               All
             </a>
           </li>{" "}
           <li>
             <a
+              onClick = {this.props.showActive}
               href="#/active"
               className={{ selected: nowShowing === "active" }}
             >
@@ -41,6 +45,7 @@ export class TodoFooter extends React.PureComponent {
           </li>{" "}
           <li>
             <a
+              onClick={this.props.showCompleted}
               href="#/completed"
               className={{ selected: nowShowing === "completed" }}
             >
