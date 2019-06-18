@@ -7,6 +7,7 @@ export class TodoItem extends React.Component {
   constructor(props) {
     super(props);
     this.state = { editText: this.props.todo.title };
+    this.handleEdit = this.handleEdit.bind(this)
   }
 
   handleSubmit(event) {
@@ -46,6 +47,7 @@ export class TodoItem extends React.Component {
       nextState.editText !== this.state.editText
     );
   }
+
   componentDidUpdate(prevProps) {
     if (!prevProps.editing && this.props.editing) {
       var node = React.findDOMNode(this.refs.editField);
@@ -55,12 +57,10 @@ export class TodoItem extends React.Component {
   }
 
   render() {
+    let status = this.props.todo.completed ? "completed" : this.props.todo.editing ? "editing" : "static"
     return (
       <li
-        className={{
-          completed: this.props.todo.completed,
-          editing: this.props.editing
-        }}
+        className={status}
       >
         <div className="view">
           <input

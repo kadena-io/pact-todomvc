@@ -25,6 +25,7 @@ export class TodoApp extends React.PureComponent {
     this.handleChange = this.handleChange.bind(this);
     this.handleNewTodoKeyDown = this.handleNewTodoKeyDown.bind(this);
     this.toggle = this.toggle.bind(this);
+    this.toggleAll = this.toggleAll.bind(this);
     this.destroy = this.destroy.bind(this);
     this.edit = this.edit.bind(this);
     this.cancel = this.cancel.bind(this);
@@ -81,7 +82,7 @@ export class TodoApp extends React.PureComponent {
       keyPairs: KP
     };
 
-    Pact.fetch.send(cmdObj, API_HOST);
+    Pact.fetch.send(cmdObj, API_HOST)
     this.getTodos();
   }
 
@@ -92,6 +93,18 @@ export class TodoApp extends React.PureComponent {
       keyPairs: KP
     };
     Pact.fetch.send(cmdObj, API_HOST);
+    this.getTodos();
+  }
+
+  toggleAll(){
+    const activeTodos = this.state.todos.filter(todo => !todo.completed)
+    const cmds = activeTodos.map(todo => {
+      return {
+        pactCode:`(todos.toggle-todo-status
+                   ${JSON.stringify(todo.id)})`,
+        keyPairs: KP
+    }});
+    Pact.fetch.send(cmds, API_HOST)
     this.getTodos();
   }
 
@@ -172,6 +185,7 @@ export class TodoApp extends React.PureComponent {
           return true;
       }
     }, this);
+
     var todoItems = shownTodos.map(function(todo) {
       return (
         <TodoItem
