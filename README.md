@@ -1,68 +1,58 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Pact Smart Contract Language TodoMVC demo
 
-## Available Scripts
+![](todos-pact.png)
 
-In the project directory, you can run:
+## Setup
 
-### `npm start`
+- Install Pact
+- Install Node >= 8.11.4
+- Install All Dependencies. The dependencies include [Pact Lang API](https://www.npmjs.com/package/pact-lang-api).
+  - `npm install`
+- Navigate into pact-todomvc and create a log folder in the top-level folder `mkdir log`
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Scripts
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+`npm run start:pact`: Start the Pact Server
 
-### `npm test`
+`npm run pact:seed`: Seed the blockchain
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+`npm run start:dev`: Start the Webpack Dev Server
 
-### `npm run build`
+## Starting the Project
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. `npm run start:pact`
+2. `npm run pact:seed`
+3. `npm start`
+4. `http://localhost:3000`
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+## Using the Pact Dev Server
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Configuration File
 
-### `npm run eject`
+The pact dev server (pact-serve) requires a configuration Yaml file (e.g. server.conf) to operate. The documentation for it is:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```
+➜  pact git:(feat/dev-server) pact --serve --help
+Config file is YAML format with the following properties:
+port       - HTTP server port
+persistDir - Directory for database files.
+             If ommitted, runs in-memory only.
+logDir     - Directory for HTTP logs
+pragmas    - SQLite pragmas to use with persistence DBs
+verbose    - [True|False] Provide extra logging information
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Initializing the server
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+When running pact-serve with persistence enabled the development server will automatically replay from disk when it starts.
+In this demo, we are persisting to `log/` which causes pact-serve to create or use `log/commands.sqlite` to store Commands and CommandResults.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+The first time you run pact-serve the SQLite DBs will be created empty (as no commands have been run yet).
+To upload `todos.pact`, which the front end needs loaded to interact with, you run `initialize-todos.sh`.
+The important thing to note is that until you delete `log/commands.sqlite` (or run pact-serve in memory) pact-serve will replay every command (e.g. load `todos.pact` -> UI interactions) on start up.
 
-## Learn More
+If you think of it like a blockchain, deleting the `commands.sqlite` file or running in memory gives Pact a "fresh" chain to work with.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Credit
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+The front-end of this app was built with [React TodoMVC](http://todomvc.com/examples/react/#/) example.

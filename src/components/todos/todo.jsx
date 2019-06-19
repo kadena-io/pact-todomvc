@@ -57,7 +57,7 @@ export class TodoItem extends React.Component {
   }
 
   render() {
-    let status = this.props.todo.completed ? "completed" : this.props.todo.editing ? "editing" : "static"
+    let status = this.props.editing===this.props.todo.id ? this.props.editing : this.props.todo.completed ? "completed" : "static";
     return (
       <li
         className={status}

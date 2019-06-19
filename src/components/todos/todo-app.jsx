@@ -3,7 +3,7 @@ import * as React from "react";
 import { TodoItem } from "./todo.jsx";
 import { TodoFooter } from "./footer.jsx";
 import uuidv4 from "uuid/v4";
-import Pact from "pact-lang-api";
+import Pact from "./pact-lang-api.js";
 
 const ENTER_KEY = 13;
 const KP = Pact.crypto.genKeyPair();
@@ -119,15 +119,16 @@ export class TodoApp extends React.PureComponent {
   }
 
   edit(todo, text) {
-    const cmdObj = {
-      pactCode: `(todos.edit-todo
-                ${JSON.stringify(todo.id)})
-                ${JSON.stringify(text)})`,
-      keyPairs: KP
-    };
-    Pact.fetch.send(cmdObj, API_HOST);
-    this.setState({ editing: null });
-    this.getTodos();
+    this.setState({editing: todo.id})
+    // const cmdObj = {
+    //   pactCode: `(todos.edit-todo
+    //             ${JSON.stringify(todo.id)})
+    //             ${JSON.stringify(text)})`,
+    //   keyPairs: KP
+    // };
+    // Pact.fetch.send(cmdObj, API_HOST);
+    // this.setState({ editing: null });
+    // this.getTodos();
   }
 
   cancel() {

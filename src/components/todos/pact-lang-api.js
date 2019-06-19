@@ -102,15 +102,6 @@ var sign = function(msg, keyPair) {
   return { hash: hsh, sig: binToHex(sigBin), pubKey: keyPair.publicKey };
 };
 
-var pullSigAndPubKey = function(s) {
-  if (!s.hasOwnProperty("pubKey") || !s.hasOwnProperty("sig")) {
-    throw new TypeError(
-      "Expected to find keys of name 'sig' and 'pubKey' in " + JSON.stringify(s)
-    );
-  }
-  return { sig: s.sig, pubKey: s.pubKey };
-};
-
 var pullSig = function(s) {
   if (!s.hasOwnProperty("sig")) {
     throw new TypeError(
@@ -118,15 +109,6 @@ var pullSig = function(s) {
     );
   }
   return { sig: s.sig };
-};
-
-var pullPubKeyAndAddr = function(s) {
-  if (!s.hasOwnProperty("pubKey")) {
-    throw new TypeError(
-      "Expected to find keys of name 'pubKey' in " + JSON.stringify(s)
-    );
-  }
-  return { pubKey: s.pubKey, addr: s.pubKey, scheme: "ED25519" };
 };
 
 var pullAndCheckHashs = function(sigs) {
@@ -223,14 +205,14 @@ var asArray = function(singleOrArray) {
 var enforceType = function(val, type, msg) {
   if (typeof val !== type) {
     throw new TypeError(
-      msg + " must be a " + type + ": " + JSON.stringify(value)
+      msg + " must be a " + type + ": " + JSON.stringify(val)
     );
   }
 };
 
 var enforceArray = function(val, msg) {
   if (!Array.isArray(val)) {
-    throw new TypeError(msg + " must be an array: " + JSON.stringify(value));
+    throw new TypeError(msg + " must be an array: " + JSON.stringify(val));
   }
 };
 
@@ -239,17 +221,6 @@ var enforceArray = function(val, msg) {
  */
 var simpleExecCommand = function(keyPairs, nonce, pactCode, envData, meta) {
   return mkPublicSend(prepareExecCmd(keyPairs, nonce, pactCode, envData, meta));
-};
-
-var unique = function(arr) {
-  var n = {},
-    r = [];
-  for (var i = 0; i < arr.length; i++) var hsh = eckHashs(sigs);
-  return mkPublicSend({
-    hash: hsh,
-    sigs: sigs.map(pullSigAndPubKey),
-    cmd: cmd
-  });
 };
 
 var unique = function(arr) {
