@@ -5,6 +5,7 @@
 ## Setup
 
 - Install Pact
+  - `brew install kadena-io/pact/pact`
 - Install Node >= 8.11.4
 - Install All Dependencies. The dependencies include [Pact Lang API](https://www.npmjs.com/package/pact-lang-api).
   - `npm install`
@@ -16,14 +17,14 @@
 
 `npm run pact:seed`: Seed the blockchain
 
-`npm run start:dev`: Start the Webpack Dev Server
+`npm start`: Start the Web Application
 
 ## Starting the Project
 
-1. `npm run start:pact`
-2. `npm run pact:seed`
-3. `npm start`
-4. `http://localhost:3000`
+1.  `npm run start:pact`
+2.  `npm run pact:seed`
+3.  `npm start`
+4.  `http://localhost:3000`
 
 ## Using the Pact Dev Server
 
@@ -55,4 +56,4 @@ If you think of it like a blockchain, deleting the `commands.sqlite` file or run
 
 ## Credit
 
-The front-end of this app was built with [React TodoMVC](http://todomvc.com/examples/react/#/) example.
+The front-end of this app was built on [React TodoMVC](http://todomvc.com/examples/react/#/) example.

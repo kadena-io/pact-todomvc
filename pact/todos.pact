@@ -17,8 +17,7 @@
     "Row type for todos."
      title:string
      completed:bool
-     deleted:bool
-     )
+     deleted:bool )
 
   (deftable todo-table:{todo})
 
