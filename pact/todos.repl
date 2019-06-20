@@ -8,7 +8,13 @@
 
 (typecheck "todos")
 
-(new-todo "get bread" "2018-10-10")
-(read-todo 0)
-(toggle-todo-status 0)
-(read-todo 0)
+(use todos)
+
+;;Create a new todo
+(new-todo "1" "wash")
+
+;;Test if todo was created
+(expect "Returns the todo object with id-1" {"completed": false, "deleted": false, "id": "1", "title": "wash"} (read-todo "1"))
+
+;;Fail if todo to be edited does not exist.
+(expect-failure "No todo exists with id of 2." (edit-todo "2" "clean"))
