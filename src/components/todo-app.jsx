@@ -45,6 +45,7 @@ export class TodoApp extends React.PureComponent {
       pactCode: `(todos.read-todos)`,
       keyPairs: KP
     };
+    
     return Pact.fetch
       .local(cmdObj, API_HOST)
       .then(res => res.data)
@@ -59,21 +60,18 @@ export class TodoApp extends React.PureComponent {
             return 0;
           });
         this.setState({ todos: notDeleted });
-      })
-      .catch(e => e);
+      });
   }
 
   add(title) {
     const uuid = uuidv4();
     const cmdObj = {
-      pactCode: `(todos.new-todo ${JSON.stringify(uuid)} ${JSON.stringify(
-        title
-      )})`,
+      pactCode: `(todos.new-todo ${JSON.stringify(uuid)} ${JSON.stringify(title)})`,
       keyPairs: KP
     };
 
-    Pact.fetch.send(cmdObj, API_HOST).catch(e => e);
-    this.getTodos();
+    Pact.fetch.send(cmdObj, API_HOST)
+      .then(() => this.getTodos());
   }
 
   toggle(todo) {
@@ -81,8 +79,9 @@ export class TodoApp extends React.PureComponent {
       pactCode: `(todos.toggle-todo-status ${JSON.stringify(todo.id)})`,
       keyPairs: KP
     };
-    Pact.fetch.send(cmdObj, API_HOST).catch(e => e);
-    this.getTodos();
+
+    Pact.fetch.send(cmdObj, API_HOST)
+      .then(() => this.getTodos());
   }
 
   toggleAll() {
@@ -98,8 +97,9 @@ export class TodoApp extends React.PureComponent {
         keyPairs: KP
       };
     });
-    Pact.fetch.send(cmds, API_HOST).catch(e => e);
-    this.getTodos();
+
+    Pact.fetch.send(cmds, API_HOST)
+      .then(() => this.getTodos());
   }
 
   destroy(todo) {
@@ -107,8 +107,9 @@ export class TodoApp extends React.PureComponent {
       pactCode: `(todos.delete-todo ${JSON.stringify(todo.id)})`,
       keyPairs: KP
     };
-    Pact.fetch.send(cmdObj, API_HOST).catch(e => e);
-    this.getTodos();
+
+    Pact.fetch.send(cmdObj, API_HOST)
+      .then(() => this.getTodos());
   }
 
   clearCompleted() {
@@ -119,20 +120,21 @@ export class TodoApp extends React.PureComponent {
         keyPairs: KP
       };
     });
-    Pact.fetch.send(cmds, API_HOST).catch(e => e);
-    this.getTodos();
+
+    Pact.fetch.send(cmds, API_HOST)
+      .then(() => this.getTodos());
   }
 
   save(todo, text) {
     const cmdObj = {
-      pactCode: `(todos.edit-todo ${JSON.stringify(todo.id)} ${JSON.stringify(
-        text
-      )})`,
+      pactCode: `(todos.edit-todo ${JSON.stringify(todo.id)} ${JSON.stringify(text)})`,
       keyPairs: KP
     };
-    Pact.fetch.send(cmdObj, API_HOST).catch(e => e);
+
+    Pact.fetch.send(cmdObj, API_HOST)
+      .then(() => this.getTodos());
+
     this.setState({ editing: null });
-    this.getTodos();
   }
 
   edit(todo) {
@@ -174,7 +176,7 @@ export class TodoApp extends React.PureComponent {
     }
   }
 
-  handleSubmit(e) {
+  handleSubmit() {
     var val = this.state.editText.trim();
     if (val) {
       this.save(val);
