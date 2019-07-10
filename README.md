@@ -4,7 +4,7 @@
 
 ## Setup
 
-- Install Pact
+- Install Pact >= 3.0.0
   - `brew install kadena-io/pact/pact`
 - Install Node >= 8.11.4
 - Install All Dependencies. The dependencies include [Pact Lang API](https://www.npmjs.com/package/pact-lang-api).
