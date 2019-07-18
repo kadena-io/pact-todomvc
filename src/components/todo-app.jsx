@@ -42,10 +42,10 @@ export class TodoApp extends React.PureComponent {
 
   getTodos() {
     const cmdObj = {
-      pactCode: `(todos.read-todos)`,
+      pactCode: Pact.lang.mkExp('todos.read-todos'),
       keyPairs: KP
     };
-    
+
     return Pact.fetch
       .local(cmdObj, API_HOST)
       .then(res => res.data)
@@ -66,7 +66,7 @@ export class TodoApp extends React.PureComponent {
   add(title) {
     const uuid = uuidv4();
     const cmdObj = {
-      pactCode: `(todos.new-todo ${JSON.stringify(uuid)} ${JSON.stringify(title)})`,
+      pactCode: Pact.lang.mkExp('todos.new-todo', uuid, title),
       keyPairs: KP
     };
 
@@ -76,7 +76,7 @@ export class TodoApp extends React.PureComponent {
 
   toggle(todo) {
     const cmdObj = {
-      pactCode: `(todos.toggle-todo-status ${JSON.stringify(todo.id)})`,
+      pactCode:  Pact.lang.mkExp('todos.toggle-todo-status', todo.id),
       keyPairs: KP
     };
 
@@ -93,7 +93,7 @@ export class TodoApp extends React.PureComponent {
         : activeTodos;
     const cmds = toggleTodos.map(todo => {
       return {
-        pactCode: `(todos.toggle-todo-status ${JSON.stringify(todo.id)})`,
+        pactCode: Pact.lang.mkExp('todos.toggle-todo-status', todo.id),
         keyPairs: KP
       };
     });
@@ -104,7 +104,7 @@ export class TodoApp extends React.PureComponent {
 
   destroy(todo) {
     const cmdObj = {
-      pactCode: `(todos.delete-todo ${JSON.stringify(todo.id)})`,
+      pactCode: Pact.lang.mkExp('todos.delete-todo', todo.id),
       keyPairs: KP
     };
 
@@ -116,7 +116,7 @@ export class TodoApp extends React.PureComponent {
     const completedTodos = this.state.todos.filter(todo => todo.completed);
     const cmds = completedTodos.map(todo => {
       return {
-        pactCode: `(todos.delete-todo ${JSON.stringify(todo.id)})`,
+        pactCode: Pact.lang.mkExp('todos.delete-todo', todo.id),
         keyPairs: KP
       };
     });
@@ -127,7 +127,7 @@ export class TodoApp extends React.PureComponent {
 
   save(todo, text) {
     const cmdObj = {
-      pactCode: `(todos.edit-todo ${JSON.stringify(todo.id)} ${JSON.stringify(text)})`,
+      pactCode: Pact.lang.mkExp('todos.edit-todo', todo.id, text),
       keyPairs: KP
     };
 
