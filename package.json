@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "base64-url": "^2.2.2",
-    "pact-lang-api": "^3.0.0",
+    "pact-lang-api": "^3.1.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.1",
